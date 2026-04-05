@@ -252,10 +252,23 @@ class InfectionInterface:
             name: str = EventNames[condition.name].value
             addr: int = condition.value["address"]
             bitflags: int = condition.value["bits"]
-            loc_id = get_location_id(name)
-            if loc_id is None:
+            try:
+                val: int = self.pine.read_int8(addr)
+                if val & bitflags == bitflags:
+                    loc_id = get_location_id(name)
+                    if loc_id is not None:
+                        checked.add(loc_id)
+
+                    is_goal = False
+                    if ctx.completion_condition == 0 and condition == CompletionConditions.SkeithDefeated:
+                        is_goal = True
+                    elif ctx.completion_condition == 1 and condition == CompletionConditions.ParasiteDragonDefeated:
+                        is_goal = True
+
+                    if is_goal:
+                        await ctx.goal()
+            except (RuntimeError, ConnectionError):
                 continue
-            addr_check(addr, bitflags, loc_id)
 
         if checked:
             ctx.checked_locations.update(checked)

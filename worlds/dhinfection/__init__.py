@@ -169,7 +169,11 @@ class InfectionWorld(World):
             main_region.locations.append(loc_meta.to_location(self.player, main_region))
         for loc_meta in Locations.WordListLocations:
             main_region.locations.append(loc_meta.to_location(self.player, main_region))
-        main_region.add_event(Ev.SkeithDefeated.value)
+
+        goal_event = Ev.SkeithDefeated.value
+        if self.options.completion_condition == 1:
+            goal_event = Ev.ParasiteDragonDefeated.value
+        main_region.add_event(goal_event)
 
     def create_item(self, item: str) -> InfectionItem:
         for itm in ITEMS_MASTER:
@@ -229,8 +233,13 @@ class InfectionWorld(World):
         self.set_stats_rules(self.playstat_locations)
 
         # Set completion condition
+        goal_event = Ev.SkeithDefeated.value
+        if self.options.completion_condition == 1:
+            goal_event = Ev.ParasiteDragonDefeated.value
+
         self.multiworld.completion_condition[self.player] = lambda state: state.has(
-            Ev.SkeithDefeated.value, self.player)
+            goal_event, self.player)
+
         add_rule(self.multiworld.get_location(Ev.ParasiteDragonDefeated.value, self.player),
                  lambda state: state.has(Ev.SkeithDefeated.value, self.player))
 
@@ -298,13 +307,13 @@ class InfectionWorld(World):
         add_rule(self.multiworld.get_location(Ev.EpitaphQ.value, self.player),
                  lambda state: state.can_reach_location(Ev.DescendentsOfFianna.value, self.player))
 
-        self.set_list_rules(Ev.MeetAlf.value, ThetaWordList.GreatDistantFertileLand)
-        add_rule(self.multiworld.get_location(Ev.MeetAlf.value, self.player),
+        self.set_list_rules(Ev.MetMeg.value, ThetaWordList.GreatDistantFertileLand)
+        add_rule(self.multiworld.get_location(Ev.MetMeg.value, self.player),
                  lambda state: state.can_reach_location(Ev.EpitaphQ.value, self.player))
 
         self.set_list_rules(Ev.SkeithDefeated.value, ThetaWordList.ChosenHopelessNothingness)
         add_rule(self.multiworld.get_location(Ev.SkeithDefeated.value, self.player),
-                 lambda state: state.can_reach_location(Ev.MeetAlf.value, self.player))
+                 lambda state: state.can_reach_location(Ev.MetMeg.value, self.player))
         add_rule(self.multiworld.get_location(Ev.SkeithDefeated.value, self.player),
                  lambda state: state.can_reach_location(PlayStatNames.KiteLevel.value + "20", self.player))
 

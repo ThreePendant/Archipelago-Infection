@@ -590,7 +590,7 @@ class Events(Enum):
     # Lonely Silent Great Seal
     EpitaphEvent026 = {"addr": 0xa44fb0, "mask": 0b00000001}
     # Great Distant Fertile Land - BlackRose
-    MeetAlfEventUnl = {"addr": 0xa44fb8, "mask": 0b00000001}
+    MeetMegEventUnl = {"addr": 0xa44fb8, "mask": 0b00000001}
     # Chosen Hopeless Nothingness
     FinishedGameEvent027 = {"addr": 0xa44fc0, "mask": 0b00000001}
 

@@ -109,6 +109,7 @@ class InfectionContext(SuperContext):
     unlocked_words: Set[AreaWords] = set()
 
     are_item_status_synced: bool = False
+    game_goaled: bool = False
 
     # Local Session Save Properties
     last_item_processed_index = -1

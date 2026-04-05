@@ -7,7 +7,7 @@ import copy
 from BaseClasses import Location
 
 from .items.AreaWords import InfectionAreaWords as AreaWords, ADDRESS as AreaWordAddress
-from .locations.Events import InfectionStoryEvents, InfectionGoldenGoblins, InfectionOptionalPartyMembers, InfectionOtherSideQuests
+from .locations.Events import InfectionStoryEvents, InfectionGoldenGoblins, InfectionOptionalPartyMembers, InfectionOtherSideQuests, CompletionConditions
 from .locations.WordList import InfectionDeltaWordList as DeltaWordList, InfectionThetaWordList as ThetaWordList, ADDRESS as WordListAddress, InfectionWordListBase, get_wordlist_name
 from .locations.PlayStats import PlayStats
 from .Strings import Meta, InfectionAreaWordNames as AreaWordNames, InfectionEventNames as EventNames, InfectionPlayStatNames as PlayStatNames
@@ -149,6 +149,7 @@ GoldenGoblins: InfectionEventLocation = event_gen(InfectionGoldenGoblins)
 SideQuests: InfectionEventLocation = event_gen(InfectionOtherSideQuests)
 OptionalPartyMembers: InfectionEventLocation = event_gen(
     InfectionOptionalPartyMembers)
+CompletionEvents: InfectionEventLocation = event_gen(CompletionConditions)
 PlayStatLocsList = playstat_gen()
 
 WordListLocations: InfectionWordListLocation = [
@@ -160,7 +161,8 @@ EventLocations: InfectionEventLocation = [
     *StoryEvents,
     *GoldenGoblins,
     *SideQuests,
-    *OptionalPartyMembers
+    *OptionalPartyMembers,
+    *CompletionEvents
 ]
 
 PlayStatLocations: InfectionPlayStatLocation = [

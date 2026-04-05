@@ -154,7 +154,7 @@ class InfectionEventNames(Enum):
     ElkMiaFavorite = "Cleared Elk & Mia's favorite map"
     PirosDiary = "Got Piros' Diary"
     MistralMeetUp = "Showed Mistral Data Drain"
-    MeetAlf = "Met Alf"
+    MetMeg = "Met Meg"
     Epitaph00 = "I shall call her Aura // Epitaph 00"
     DescendentsOfFianna = "Learned about the Descendents of Fianna"
     EpitaphQ = "Epitaph ??"
