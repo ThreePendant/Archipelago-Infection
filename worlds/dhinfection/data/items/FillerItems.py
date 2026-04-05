@@ -37,3 +37,4 @@ class Consumables(Enum):
 class VirusCores(Enum):
     VirusCoreA = {"id": 0xa406cc}
     VirusCoreB = {"id": 0xa406cd}
+    VirusCoreC = {"id": 0xa406ce}

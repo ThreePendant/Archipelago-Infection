@@ -201,6 +201,7 @@ class InfectionItemNames(Enum):
     FairysOrb = "Fairy's Orb"
     VirusCoreA = "Virus Core A"
     VirusCoreB = "Virus Core B"
+    VirusCoreC = "Virus Core C"
 
 
 class InfectionAreaWordNames(Enum):
