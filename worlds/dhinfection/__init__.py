@@ -166,14 +166,25 @@ class InfectionWorld(World):
         for loc_meta in self.playstat_locations:
             main_region.locations.append(loc_meta.to_location(self.player, main_region))
         for loc_meta in Locations.EventLocations:
-            main_region.locations.append(loc_meta.to_location(self.player, main_region))
+            event = loc_meta
+            if event.event == Locations.CompletionConditions.SkeithDefeated and self.options.completion_condition == 1:
+                event.progress_type = LocationProgressType.EXCLUDED
+            if event.event == Locations.CompletionConditions.ParasiteDragonDefeated and self.options.completion_condition == 0:
+                event.progress_type = LocationProgressType.EXCLUDED
+            loc = loc_meta.to_location(self.player, main_region)
+            main_region.locations.append(loc)
         for loc_meta in Locations.WordListLocations:
-            main_region.locations.append(loc_meta.to_location(self.player, main_region))
+            if loc_meta.wordlist == DeltaWordList.HideousSomeonesGiant and self.options.completion_condition == 0:
+                loc_meta.progress_type = LocationProgressType.EXCLUDED
+            loc = loc_meta.to_location(self.player, main_region)
+            main_region.locations.append(loc)
 
-        goal_event = Ev.SkeithDefeated.value
-        if self.options.completion_condition == 1:
-            goal_event = Ev.ParasiteDragonDefeated.value
-        main_region.add_event(goal_event)
+        main_region.add_event("Victory")
+
+        # goal_event = Ev.SkeithDefeated.value
+        # if self.options.completion_condition == 1:
+        #     goal_event = Ev.ParasiteDragonDefeated.value
+        # main_region.add_event(goal_event)
 
     def create_item(self, item: str) -> InfectionItem:
         for itm in ITEMS_MASTER:
@@ -201,6 +212,11 @@ class InfectionWorld(World):
             get_wordlist_name(DeltaWordList.HiddenForbiddenHolyGround),
             get_wordlist_name(DeltaWordList.BurstingPassedOverAquaField),
         ]
+        for item_name in starting_items:
+            item = self.create_item(item_name)
+            if item:
+                self.multiworld.push_precollected(item)
+
         for item in ITEMS_MASTER:
             if item.name in starting_items:
                 continue
@@ -214,34 +230,41 @@ class InfectionWorld(World):
         self.item_pool.extend(self.create_filler() for _ in range(needed_filler))
         self.multiworld.itempool += self.item_pool
 
-    def set_list_rules(self, location, wordlist):
-        add_rule(self.multiworld.get_location(location, self.player),
+    def set_list_rules(self, event_location, wordlist):
+        add_rule(self.multiworld.get_location(event_location, self.player),
                  lambda state: state.has(get_wordlist_name(wordlist), self.player))
+
         if wordlist in ThetaWordList:
-            add_rule(self.multiworld.get_location(location, self.player),
+            add_rule(self.multiworld.get_location(event_location, self.player),
                      lambda state: state.has(ServerNames.Theta.value, self.player))
-        return
+
+        if wordlist in ThetaWordList:
+            add_rule(self.multiworld.get_location(get_wordlist_name(wordlist), self.player),
+                     lambda state: state.has(ServerNames.Theta.value, self.player))
 
     def set_stats_rules(self, stats):
         for i in range(len(stats)-1):
             if stats[i].name.split('-')[0] != stats[i+1].name.split('-')[0]:
                 continue
-            add_rule(self.multiworld.get_location(stats[1-i].name, self.player),
-                     lambda state: state.can_reach_location(stats[1-(i+1)].name, self.player))
+            add_rule(self.multiworld.get_location(stats[i+1].name, self.player),
+                     lambda state, i=i: state.can_reach_location(stats[i].name, self.player))
 
     def set_rules(self):
         self.set_stats_rules(self.playstat_locations)
 
         # Set completion condition
-        goal_event = Ev.SkeithDefeated.value
+        goal_loc = Ev.SkeithDefeated.value
         if self.options.completion_condition == 1:
-            goal_event = Ev.ParasiteDragonDefeated.value
+            goal_loc = Ev.ParasiteDragonDefeated.value
 
-        self.multiworld.completion_condition[self.player] = lambda state: state.has(
-            goal_event, self.player)
+        add_rule(self.multiworld.get_location("Victory", self.player),
+                 lambda state: state.can_reach_location(goal_loc, self.player))
 
-        add_rule(self.multiworld.get_location(Ev.ParasiteDragonDefeated.value, self.player),
-                 lambda state: state.has(Ev.SkeithDefeated.value, self.player))
+        self.multiworld.completion_condition[self.player] = lambda state: state.has("Victory", self.player)
+
+        if self.options.completion_condition == 1:
+            add_rule(self.multiworld.get_location(Ev.ParasiteDragonDefeated.value, self.player),
+                     lambda state: state.can_reach_location(Ev.SkeithDefeated.value, self.player))
 
         # Story missions
         self.set_list_rules(Ev.FirstDataBug.value, DeltaWordList.ExpansiveHauntedSeaOfSand)
@@ -249,16 +272,22 @@ class InfectionWorld(World):
                  lambda state: state.can_reach_location(PlayStatNames.KiteLevel.value + "1", self.player))
 
         self.set_list_rules(Ev.LearnGateHacking.value, DeltaWordList.BoundlessCorruptedFortWalls)
+        add_rule(self.multiworld.get_location(get_wordlist_name(DeltaWordList.BoundlessCorruptedFortWalls), self.player),
+                 lambda state: state.can_reach_location(Ev.FirstDataBug.value, self.player))
         add_rule(self.multiworld.get_location(Ev.LearnGateHacking.value, self.player),
                  lambda state: state.can_reach_location(Ev.FirstDataBug.value, self.player))
         add_rule(self.multiworld.get_location(Ev.LearnGateHacking.value, self.player),
                  lambda state: state.can_reach_location(PlayStatNames.KiteLevel.value + "7", self.player))
 
         self.set_list_rules(Ev.SavedPiros.value, DeltaWordList.IndiscreetGluttonousPilgrimage)
+        add_rule(self.multiworld.get_location(get_wordlist_name(DeltaWordList.IndiscreetGluttonousPilgrimage), self.player),
+                 lambda state: state.can_reach_location(Ev.LearnGateHacking.value, self.player))
         add_rule(self.multiworld.get_location(Ev.SavedPiros.value, self.player),
                  lambda state: state.can_reach_location(Ev.LearnGateHacking.value, self.player))
 
         self.set_list_rules(Ev.BoardProtected.value, DeltaWordList.ClosedObliviousTwinHills)
+        add_rule(self.multiworld.get_location(get_wordlist_name(DeltaWordList.ClosedObliviousTwinHills), self.player),
+                 lambda state: state.can_reach_location(Ev.SavedPiros.value, self.player))
         add_rule(self.multiworld.get_location(Ev.BoardProtected.value, self.player), lambda state: state.has(
             CharacterNames.Mia.value, self.player) and state.has(CharacterNames.Elk.value, self.player))
         add_rule(self.multiworld.get_location(Ev.BoardProtected.value, self.player),
@@ -267,6 +296,8 @@ class InfectionWorld(World):
                  lambda state: state.can_reach_location(PlayStatNames.KiteLevel.value + "5", self.player))
 
         self.set_list_rules(Ev.BlackRoseDungeon.value, ThetaWordList.QuietEternalWhiteDevil)
+        add_rule(self.multiworld.get_location(get_wordlist_name(ThetaWordList.QuietEternalWhiteDevil), self.player),
+                 lambda state: state.can_reach_location(Ev.BoardProtected.value, self.player))
         # add_rule(self.multiworld.get_location(Ev.BlackRoseDungeon.value, self.player), lambda state: state.has(CharacterNames.BlackRose.value, self.player))
         add_rule(self.multiworld.get_location(Ev.BlackRoseDungeon.value, self.player),
                  lambda state: state.can_reach_location(Ev.BoardProtected.value, self.player))
@@ -276,18 +307,24 @@ class InfectionWorld(World):
                  lambda state: state.can_reach_location(PlayStatNames.KiteLevel.value + "15", self.player))
 
         self.set_list_rules(Ev.ElkMiaFavorite.value, DeltaWordList.PlenteousSmilingHypha)
+        add_rule(self.multiworld.get_location(get_wordlist_name(DeltaWordList.PlenteousSmilingHypha), self.player),
+                 lambda state: state.can_reach_location(Ev.BlackRoseDungeon.value, self.player))
         add_rule(self.multiworld.get_location(Ev.ElkMiaFavorite.value, self.player), lambda state: state.has(
             CharacterNames.Elk.value, self.player) and state.has(CharacterNames.Mia.value, self.player))
         add_rule(self.multiworld.get_location(Ev.ElkMiaFavorite.value, self.player),
                  lambda state: state.can_reach_location(Ev.BlackRoseDungeon.value, self.player))
 
         self.set_list_rules(Ev.PirosDiary.value, DeltaWordList.PutridHotbloodedScaffold)
+        add_rule(self.multiworld.get_location(get_wordlist_name(DeltaWordList.PutridHotbloodedScaffold), self.player),
+                 lambda state: state.can_reach_location(Ev.ElkMiaFavorite.value, self.player))
         add_rule(self.multiworld.get_location(Ev.PirosDiary.value, self.player),
                  lambda state: state.has(CharacterNames.Piros.value, self.player))
         add_rule(self.multiworld.get_location(Ev.PirosDiary.value, self.player),
                  lambda state: state.can_reach_location(Ev.ElkMiaFavorite.value, self.player))
 
         self.set_list_rules(Ev.MistralMeetUp.value, ThetaWordList.CollapsedMomentarySpiral)
+        add_rule(self.multiworld.get_location(get_wordlist_name(ThetaWordList.CollapsedMomentarySpiral), self.player),
+                 lambda state: state.can_reach_location(Ev.PirosDiary.value, self.player))
         add_rule(self.multiworld.get_location(Ev.MistralMeetUp.value, self.player),
                  lambda state: state.has(CharacterNames.Mistral.value, self.player))
         add_rule(self.multiworld.get_location(Ev.MistralMeetUp.value, self.player),
@@ -296,22 +333,32 @@ class InfectionWorld(World):
                  lambda state: state.has(ServerNames.Theta.value, self.player))
 
         self.set_list_rules(Ev.Epitaph00.value, ThetaWordList.CursedDespairedParadise)
+        add_rule(self.multiworld.get_location(get_wordlist_name(ThetaWordList.CursedDespairedParadise), self.player),
+                 lambda state: state.can_reach_location(Ev.MistralMeetUp.value, self.player))
         add_rule(self.multiworld.get_location(Ev.Epitaph00.value, self.player),
                  lambda state: state.can_reach_location(Ev.MistralMeetUp.value, self.player))
 
         self.set_list_rules(Ev.DescendentsOfFianna.value, DeltaWordList.BuriedPaganFierySands)
+        add_rule(self.multiworld.get_location(get_wordlist_name(DeltaWordList.BuriedPaganFierySands), self.player),
+                 lambda state: state.can_reach_location(Ev.Epitaph00.value, self.player))
         add_rule(self.multiworld.get_location(Ev.DescendentsOfFianna.value, self.player),
                  lambda state: state.can_reach_location(Ev.Epitaph00.value, self.player))
 
         self.set_list_rules(Ev.EpitaphQ.value, DeltaWordList.LonelySilentGreatSeal)
+        add_rule(self.multiworld.get_location(get_wordlist_name(DeltaWordList.LonelySilentGreatSeal), self.player),
+                 lambda state: state.can_reach_location(Ev.DescendentsOfFianna.value, self.player))
         add_rule(self.multiworld.get_location(Ev.EpitaphQ.value, self.player),
                  lambda state: state.can_reach_location(Ev.DescendentsOfFianna.value, self.player))
 
         self.set_list_rules(Ev.MetMeg.value, ThetaWordList.GreatDistantFertileLand)
+        add_rule(self.multiworld.get_location(get_wordlist_name(ThetaWordList.GreatDistantFertileLand), self.player),
+                 lambda state: state.can_reach_location(Ev.EpitaphQ.value, self.player))
         add_rule(self.multiworld.get_location(Ev.MetMeg.value, self.player),
                  lambda state: state.can_reach_location(Ev.EpitaphQ.value, self.player))
 
         self.set_list_rules(Ev.SkeithDefeated.value, ThetaWordList.ChosenHopelessNothingness)
+        add_rule(self.multiworld.get_location(get_wordlist_name(ThetaWordList.ChosenHopelessNothingness), self.player),
+                 lambda state: state.can_reach_location(Ev.MetMeg.value, self.player))
         add_rule(self.multiworld.get_location(Ev.SkeithDefeated.value, self.player),
                  lambda state: state.can_reach_location(Ev.MetMeg.value, self.player))
         add_rule(self.multiworld.get_location(Ev.SkeithDefeated.value, self.player),
@@ -319,19 +366,29 @@ class InfectionWorld(World):
 
         # Optional Party Members
         self.set_list_rules(Ev.Natsume.value, DeltaWordList.RagingPassionateMelody)
+        add_rule(self.multiworld.get_location(get_wordlist_name(DeltaWordList.RagingPassionateMelody), self.player),
+                 lambda state: state.can_reach_location(Ev.BoardProtected.value, self.player))
         add_rule(self.multiworld.get_location(Ev.Natsume.value, self.player),
                  lambda state: state.can_reach_location(Ev.BoardProtected.value, self.player))
 
         self.set_list_rules(Ev.Gardenia.value, ThetaWordList.SoftSolitaryTriPansy)
+        add_rule(self.multiworld.get_location(get_wordlist_name(ThetaWordList.SoftSolitaryTriPansy), self.player),
+                 lambda state: state.can_reach_location(Ev.ElkMiaFavorite.value, self.player))
         add_rule(self.multiworld.get_location(Ev.Gardenia.value, self.player),
                  lambda state: state.can_reach_location(Ev.ElkMiaFavorite.value, self.player))
 
         self.set_list_rules(Ev.Sanjuro.value, DeltaWordList.HideousDestroyersFarThunder)
+        add_rule(self.multiworld.get_location(get_wordlist_name(DeltaWordList.HideousDestroyersFarThunder), self.player),
+                 lambda state: state.can_reach_location(Ev.ElkMiaFavorite.value, self.player))
         add_rule(self.multiworld.get_location(Ev.Sanjuro.value, self.player),
                  lambda state: state.can_reach_location(Ev.ElkMiaFavorite.value, self.player))
 
         # Gardenia's quest
         self.set_list_rules(Ev.GracefulBook.value, ThetaWordList.BeautifulSomeonesTreasureGem)
+        add_rule(self.multiworld.get_location(get_wordlist_name(ThetaWordList.BeautifulSomeonesTreasureGem), self.player),
+                 lambda state: state.has(CharacterNames.Gardenia.value, self.player))
+        add_rule(self.multiworld.get_location(get_wordlist_name(ThetaWordList.BeautifulSomeonesTreasureGem), self.player),
+                 lambda state: state.can_reach_location(Ev.MistralMeetUp.value, self.player))
         add_rule(self.multiworld.get_location(Ev.GracefulBook.value, self.player),
                  lambda state: state.has(CharacterNames.Gardenia.value, self.player))
         add_rule(self.multiworld.get_location(Ev.GracefulBook.value, self.player),
@@ -343,24 +400,32 @@ class InfectionWorld(World):
         self.set_list_rules(Ev.Stehony.value, DeltaWordList.DetestableGoldenSunnyDemon)
 
         self.set_list_rules(Ev.Jonue.value, DeltaWordList.DetestableGoldenMessenger)
+        add_rule(self.multiworld.get_location(get_wordlist_name(DeltaWordList.DetestableGoldenMessenger), self.player),
+                 lambda state: state.can_reach_location(Ev.Stehony.value, self.player))
         add_rule(self.multiworld.get_location(Ev.Jonue.value, self.player),
                  lambda state: state.can_reach_location(Ev.Stehony.value, self.player))
         add_rule(self.multiworld.get_location(Ev.Jonue.value, self.player),
                  lambda state: state.can_reach_location(Ev.BoardProtected.value, self.player))
 
         self.set_list_rules(Ev.Zyan.value, DeltaWordList.DetestableGoldenScent)
+        add_rule(self.multiworld.get_location(get_wordlist_name(DeltaWordList.DetestableGoldenScent), self.player),
+                 lambda state: state.can_reach_location(Ev.Jonue.value, self.player))
         add_rule(self.multiworld.get_location(Ev.Zyan.value, self.player),
                  lambda state: state.can_reach_location(Ev.Jonue.value, self.player))
         add_rule(self.multiworld.get_location(Ev.Zyan.value, self.player),
                  lambda state: state.can_reach_location(Ev.ElkMiaFavorite.value, self.player))
 
         self.set_list_rules(Ev.Albert.value, DeltaWordList.DetestableGoldenNewTruth)
+        add_rule(self.multiworld.get_location(get_wordlist_name(DeltaWordList.DetestableGoldenNewTruth), self.player),
+                 lambda state: state.can_reach_location(Ev.Zyan.value, self.player))
         add_rule(self.multiworld.get_location(Ev.Albert.value, self.player),
                  lambda state: state.can_reach_location(Ev.Zyan.value, self.player))
         add_rule(self.multiworld.get_location(Ev.Albert.value, self.player),
                  lambda state: state.can_reach_location(Ev.MistralMeetUp.value, self.player))
 
         self.set_list_rules(Ev.Martina.value, DeltaWordList.DetestableGoldenGate)
+        add_rule(self.multiworld.get_location(get_wordlist_name(DeltaWordList.DetestableGoldenGate), self.player),
+                 lambda state: state.can_reach_location(Ev.Albert.value, self.player))
         add_rule(self.multiworld.get_location(Ev.Martina.value, self.player),
                  lambda state: state.can_reach_location(Ev.Albert.value, self.player))
         add_rule(self.multiworld.get_location(Ev.Martina.value, self.player),

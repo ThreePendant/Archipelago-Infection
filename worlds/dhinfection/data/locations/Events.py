@@ -53,8 +53,4 @@ class InfectionOptionalPartyMembers(InfectionEventBase):
     Sanjuro = {"address": 0xa45099, "bits": 0b00000001}
     Gardenia = {"address": 0xa450a2, "bits": 0b00000100}
     Natsume = {"address": 0xa450b0, "bits": 0b10000000}
-
-
-class InfectionOtherSideQuests(InfectionEventBase):
     GracefulBook = {"address": 0xa450a9, "bits": 0b00000001}
-    ParasiteDragonDefeated = {"address": 0xa450b8, "bits": 0b00010000}

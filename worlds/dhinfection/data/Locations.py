@@ -7,7 +7,7 @@ import copy
 from BaseClasses import Location
 
 from .items.AreaWords import InfectionAreaWords as AreaWords, ADDRESS as AreaWordAddress
-from .locations.Events import InfectionStoryEvents, InfectionGoldenGoblins, InfectionOptionalPartyMembers, InfectionOtherSideQuests, CompletionConditions
+from .locations.Events import InfectionStoryEvents, InfectionGoldenGoblins, InfectionOptionalPartyMembers, CompletionConditions
 from .locations.WordList import InfectionDeltaWordList as DeltaWordList, InfectionThetaWordList as ThetaWordList, ADDRESS as WordListAddress, InfectionWordListBase, get_wordlist_name
 from .locations.PlayStats import PlayStats
 from .Strings import Meta, InfectionAreaWordNames as AreaWordNames, InfectionEventNames as EventNames, InfectionPlayStatNames as PlayStatNames
@@ -50,6 +50,7 @@ class InfectionWordListLocation(InfectionLocationMeta):
 class InfectionEventLocation(InfectionLocationMeta):
     event: InfectionStoryEvents
     bitflags: int
+    progress_type: LocationProgressType
 
     def __init__(self, name: str, location_id: int, event, bitflags: int) -> InfectionLocation:
         self.name = name
@@ -146,7 +147,6 @@ AreaWordLocations = area_word_gen(AreaWords)
 
 StoryEvents: InfectionEventLocation = event_gen(InfectionStoryEvents)
 GoldenGoblins: InfectionEventLocation = event_gen(InfectionGoldenGoblins)
-SideQuests: InfectionEventLocation = event_gen(InfectionOtherSideQuests)
 OptionalPartyMembers: InfectionEventLocation = event_gen(
     InfectionOptionalPartyMembers)
 CompletionEvents: InfectionEventLocation = event_gen(CompletionConditions)
@@ -160,7 +160,6 @@ WordListLocations: InfectionWordListLocation = [
 EventLocations: InfectionEventLocation = [
     *StoryEvents,
     *GoldenGoblins,
-    *SideQuests,
     *OptionalPartyMembers,
     *CompletionEvents
 ]
@@ -193,7 +192,6 @@ def generate_location_groups() -> dict[str, int]:
     groups.update({
         "Story Events": {el.name: el.location_id for el in StoryEvents},
         "Golden Goblins": {el.name: el.location_id for el in GoldenGoblins},
-        "Side Quests": {el.name: el.location_id for el in SideQuests},
         "Optional Party Members": {el.name: el.location_id for el in OptionalPartyMembers},
         "Play Stats": {el.name: el.location_id for el in PlayStatLocations},
         "Area Words": {el.name: el.location_id for el in AreaWordLocations},

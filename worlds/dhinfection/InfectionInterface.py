@@ -14,7 +14,7 @@ from . import InfectionItem
 from .data.Strings import APConsole, Meta, InfectionGameStateNames as GameStateNames, InfectionAreaWordNames as AreaWordNames, InfectionEventNames as EventNames
 from .data.GameState import InfectionGameState as GameState
 from .data.locations.WordList import InfectionDeltaWordList as DeltaWordList, InfectionThetaWordList as ThetaWordList, InfectionWordListBase as WordListBase, get_wordlist_name
-from .data.locations.Events import InfectionStoryEvents as StoryEvents, InfectionGoldenGoblins as GoldenGoblins, InfectionOtherSideQuests as SideQuests, InfectionOptionalPartyMembers as OptionalPartyMembers
+from .data.locations.Events import InfectionStoryEvents as StoryEvents, InfectionGoldenGoblins as GoldenGoblins, InfectionOptionalPartyMembers as OptionalPartyMembers
 
 from .data.items.AreaWords import InfectionAreaWords as AreaWords
 from .data.items.Servers import InfectionServers as Servers
@@ -233,16 +233,6 @@ class InfectionInterface:
                 continue
             addr_check(addr, bitflags, loc_id)
 
-        # Other Side Quests
-        for quest in SideQuests:
-            name: str = EventNames[quest.name].value
-            addr: int = quest.value["address"]
-            bitflags: int = quest.value["bits"]
-            loc_id = get_location_id(name)
-            if loc_id is None:
-                continue
-            addr_check(addr, bitflags, loc_id)
-
         # Ryu Book stats
         for stat in PlayStats:
             stat_check(stat)
@@ -259,13 +249,9 @@ class InfectionInterface:
                     if loc_id is not None:
                         checked.add(loc_id)
 
-                    is_goal = False
-                    if ctx.completion_condition == 0 and condition == CompletionConditions.SkeithDefeated:
-                        is_goal = True
-                    elif ctx.completion_condition == 1 and condition == CompletionConditions.ParasiteDragonDefeated:
-                        is_goal = True
-
-                    if is_goal:
+                    target_condition = CompletionConditions.SkeithDefeated if ctx.completion_condition == 0 \
+                        else CompletionConditions.ParasiteDragonDefeated
+                    if condition == target_condition:
                         await ctx.goal()
             except (RuntimeError, ConnectionError):
                 continue
