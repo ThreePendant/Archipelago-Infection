@@ -237,8 +237,6 @@ class InfectionWorld(World):
         if wordlist in ThetaWordList:
             add_rule(self.multiworld.get_location(event_location, self.player),
                      lambda state: state.has(ServerNames.Theta.value, self.player))
-
-        if wordlist in ThetaWordList:
             add_rule(self.multiworld.get_location(get_wordlist_name(wordlist), self.player),
                      lambda state: state.has(ServerNames.Theta.value, self.player))
 
@@ -298,7 +296,8 @@ class InfectionWorld(World):
         self.set_list_rules(Ev.BlackRoseDungeon.value, ThetaWordList.QuietEternalWhiteDevil)
         add_rule(self.multiworld.get_location(get_wordlist_name(ThetaWordList.QuietEternalWhiteDevil), self.player),
                  lambda state: state.can_reach_location(Ev.BoardProtected.value, self.player))
-        # add_rule(self.multiworld.get_location(Ev.BlackRoseDungeon.value, self.player), lambda state: state.has(CharacterNames.BlackRose.value, self.player))
+        add_rule(self.multiworld.get_location(Ev.BlackRoseDungeon.value, self.player),
+                 lambda state: state.has(CharacterNames.BlackRose.value, self.player))
         add_rule(self.multiworld.get_location(Ev.BlackRoseDungeon.value, self.player),
                  lambda state: state.can_reach_location(Ev.BoardProtected.value, self.player))
         add_rule(self.multiworld.get_location(Ev.BlackRoseDungeon.value, self.player),
