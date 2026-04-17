@@ -11,13 +11,13 @@ from worlds.AutoWorld import World, WebWorld
 from worlds.LauncherComponents import Component, components, launch_subprocess, Type
 from worlds.generic.Rules import add_rule, set_rule
 
-from .data.Strings import APConsole, APHelper, Meta, InfectionEventNames as Ev, InfectionAreaWordNames as AreaWordNames, InfectionCharacterNames as CharacterNames, InfectionPlayStatNames as PlayStatNames, InfectionServerNames as ServerNames, InfectionItemNames as ItemNames
+from .data.Strings import APConsole, APHelper, Meta, EventNames as Ev, AreaWordNames, CharacterNames, PlayStatNames, ServerNames, ItemNames
 from .data import Locations, Items
 from .data.Items import InfectionItem, InfectionItemMeta, ITEMS_MASTER
 from .data.Locations import InfectionLocation, EventLocations, WordListLocations
-from .data.items.PartyMembers import InfectionPartyMembers as PartyMembers
-from .data.items.AreaWords import InfectionAreaWords as AreaWords
-from .data.items.Servers import InfectionServers as Servers
+from .data.items.PartyMembers import PartyMembers
+from .data.items.AreaWords import AreaWords
+from .data.items.Servers import Servers
 from .data.locations.WordList import InfectionDeltaWordList as DeltaWordList, InfectionThetaWordList as ThetaWordList, get_wordlist_name
 from .InfectionOptions import InfectionOptions, slot_data_options, create_option_groups
 

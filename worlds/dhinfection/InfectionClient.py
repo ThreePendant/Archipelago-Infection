@@ -9,14 +9,14 @@ from settings import get_settings
 import Utils
 
 from . import InfectionSettings
-from .data.Strings import APConsole, APHelper, InfectionGameStateNames, InfectionCharacterNames, InfectionAreaWordNames, Meta
+from .data.Strings import APConsole, APHelper, GameStateNames, CharacterNames, AreaWordNames, Meta
 from .InfectionInterface import InfectionInterface, ConnectionStatus
 from .data import Locations, Items
 
-from .data.locations.WordList import InfectionWordListBase as WordListBase
-from .data.items.PartyMembers import InfectionPartyMembers as PartyMembers
-from .data.items.Servers import InfectionServers as Server
-from .data.items.AreaWords import InfectionAreaWords as AreaWords
+from .data.locations.WordList import WordListBase
+from .data.items.PartyMembers import PartyMembers
+from .data.items.Servers import Servers
+from .data.items.AreaWords import AreaWords
 
 gui_loaded_from_utils: bool = False
 try:
@@ -105,7 +105,7 @@ class InfectionContext(SuperContext):
     unlocked_word_lists: Set[int] = {0x0e, 0x0f}
     obtained_word_lists: Set[int] = set()
     unlocked_party_members: Set[PartyMembers] = {PartyMembers.BlackRose}
-    unlocked_servers: Set[Server] = {Server.Delta}
+    unlocked_servers: Set[Servers] = {Servers.Delta}
     unlocked_words: Set[AreaWords] = set()
 
     are_item_status_synced: bool = False

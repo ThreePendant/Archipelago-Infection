@@ -6,11 +6,11 @@ import copy
 
 from BaseClasses import Location
 
-from .items.AreaWords import InfectionAreaWords as AreaWords, ADDRESS as AreaWordAddress
+from .items.AreaWords import AreaWords, ADDRESS as AreaWordAddress
 from .locations.Events import InfectionStoryEvents, InfectionGoldenGoblins, InfectionOptionalPartyMembers, CompletionConditions
-from .locations.WordList import InfectionDeltaWordList as DeltaWordList, InfectionThetaWordList as ThetaWordList, ADDRESS as WordListAddress, InfectionWordListBase, get_wordlist_name
+from .locations.WordList import InfectionDeltaWordList as DeltaWordList, InfectionThetaWordList as ThetaWordList, ADDRESS as WordListAddress, WordListBase, get_wordlist_name
 from .locations.PlayStats import PlayStats
-from .Strings import Meta, InfectionAreaWordNames as AreaWordNames, InfectionEventNames as EventNames, InfectionPlayStatNames as PlayStatNames
+from .Strings import Meta, AreaWordNames, EventNames, PlayStatNames
 
 
 class InfectionLocation(Location):
@@ -38,9 +38,9 @@ class InfectionAreaWordLocation(InfectionLocationMeta):
 
 
 class InfectionWordListLocation(InfectionLocationMeta):
-    wordlist: InfectionWordListBase
+    wordlist: WordListBase
 
-    def __init__(self, wordlist: InfectionWordListBase) -> InfectionLocation:
+    def __init__(self, wordlist: WordListBase) -> InfectionLocation:
         self.name = get_wordlist_name(wordlist)
         self.location_id = WordListAddress * 10 + wordlist.value["address"]
         self.wordlist = wordlist

@@ -1,12 +1,12 @@
 from enum import Enum
 from BaseClasses import Item, ItemClassification
-from ..items.AreaWords import InfectionAreaWords as AreaWords
-from ..Strings import InfectionAreaWordNames as AreaWordNames
+from ..items.AreaWords import AreaWords
+from ..Strings import AreaWordNames
 
 ADDRESS = 0xa44c47
 
 
-class InfectionWordListBase(Enum):
+class WordListBase(Enum):
     @classmethod
     def from_address(self, address: int):
         for member in self:
@@ -15,14 +15,14 @@ class InfectionWordListBase(Enum):
         return None
 
 
-def get_wordlist_name(wordlist: InfectionWordListBase) -> str:
+def get_wordlist_name(wordlist: WordListBase) -> str:
     words = []
     for word in wordlist.value["words"]:
         words.append(AreaWordNames[word.name].value)
     return " ".join(words)
 
 
-class InfectionDeltaWordList(InfectionWordListBase):
+class InfectionDeltaWordList(WordListBase):
     BurstingPassedOverAquaField = {"address": 0x0e, "words": [
         AreaWords.Bursting, AreaWords.PassedOver, AreaWords.AquaField
     ],
@@ -120,7 +120,7 @@ class InfectionDeltaWordList(InfectionWordListBase):
     }
 
 
-class InfectionThetaWordList(InfectionWordListBase):
+class InfectionThetaWordList(WordListBase):
     QuietEternalWhiteDevil = {"address": 0x14, "words": [
         AreaWords.Quiet, AreaWords.Eternal, AreaWords.WhiteDevil
     ],

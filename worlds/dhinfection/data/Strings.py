@@ -80,7 +80,7 @@ class Meta(Enum):
     supported_versions = ["SLUS-20267"]
 
 
-class InfectionGameStateNames(Enum):
+class GameStateNames(Enum):
     _value_: str
     LoggedIn = "Logged In"
     LoggingIn = "Logging In"
@@ -89,7 +89,7 @@ class InfectionGameStateNames(Enum):
     TitleScreen = "Title Screen"
 
 
-class InfectionCharacterNames(Enum):
+class CharacterNames(Enum):
     _value_: str
     Mia = "Mia"
     Orca = "Orca"
@@ -110,7 +110,7 @@ class InfectionCharacterNames(Enum):
     Helba = "Helba"
 
 
-class InfectionServerNames(Enum):
+class ServerNames(Enum):
     _value_: str
     Delta = "Δ Server: Aqua City - Mac Anu"
     Theta = "Θ Server: Highland City - Dun Loireag"
@@ -119,7 +119,7 @@ class InfectionServerNames(Enum):
     Omega = "Ω Server: Relic City - Lia Fail"
 
 
-class InfectionPlayStatNames(Enum):
+class PlayStatNames(Enum):
     _value_: str
     AreasVisited = "Areas Visited - "
     PortalsOpened = "Portals Opened - "
@@ -133,7 +133,7 @@ class InfectionPlayStatNames(Enum):
     GottOpened = "Gott's Treasures Obtained - "
 
 
-class InfectionEventNames(Enum):
+class EventNames(Enum):
     _value_: str
     CharacterCreation = "Character Creation Complete"
     FirstLogin = "First login"
@@ -171,7 +171,7 @@ class InfectionEventNames(Enum):
     Martina = "Beat Golden Goblin 5: Martina"
 
 
-class InfectionItemNames(Enum):
+class ItemNames(Enum):
     HealthDrink = "Health Drink"
     HealthPotion = "Health Potion"
     HealingElixer = "Healing Elixer"
@@ -204,7 +204,7 @@ class InfectionItemNames(Enum):
     VirusCoreC = "Virus Core C"
 
 
-class InfectionAreaWordNames(Enum):
+class AreaWordNames(Enum):
     _value_: str
     Bursting = "Bursting"
     PassedOver = "Passed Over"

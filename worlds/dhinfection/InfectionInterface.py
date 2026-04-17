@@ -11,18 +11,18 @@ from typing import Optional, List, Set
 from NetUtils import NetworkItem
 from .pcsx2_interface.pine import Pine
 from . import InfectionItem
-from .data.Strings import APConsole, Meta, InfectionGameStateNames as GameStateNames, InfectionAreaWordNames as AreaWordNames, InfectionEventNames as EventNames
+from .data.Strings import APConsole, Meta, GameStateNames, AreaWordNames, EventNames
 from .data.GameState import InfectionGameState as GameState
-from .data.locations.WordList import InfectionDeltaWordList as DeltaWordList, InfectionThetaWordList as ThetaWordList, InfectionWordListBase as WordListBase, get_wordlist_name
+from .data.locations.WordList import InfectionDeltaWordList as DeltaWordList, InfectionThetaWordList as ThetaWordList, WordListBase, get_wordlist_name
 from .data.locations.Events import InfectionStoryEvents as StoryEvents, InfectionGoldenGoblins as GoldenGoblins, InfectionOptionalPartyMembers as OptionalPartyMembers
 
-from .data.items.AreaWords import InfectionAreaWords as AreaWords
-from .data.items.Servers import InfectionServers as Servers
-from .data.items.PartyMembers import InfectionPartyMembers as PartyMembers
+from .data.items.AreaWords import AreaWords
+from .data.items.Servers import Servers
+from .data.items.PartyMembers import PartyMembers
 from .data.items.FillerItems import Consumables, VirusCores
 
 from .data import Items
-from .data.Items import InfectionWordListItem as WordListItem, AreaWordItem, PartyMemberItem, ServerItem, ConsumableItem, VirusCoreItem
+from .data.Items import InfectionWordListItem as WordListItem, PartyMemberItem, ServerItem, ConsumableItem, VirusCoreItem
 from .data.Items import WordListItems, ConsumableItems, VirusCoreItems
 from .data.Items import ServerItems
 from .data.Items import PartyMemberItems
@@ -297,9 +297,6 @@ class InfectionInterface:
                 elif isinstance(item, ServerItem):
                     """Add to list of allowed servers"""
                     ctx.unlocked_servers.add(item.server)
-                elif isinstance(item, AreaWordItem):
-                    """Unlock word"""
-                    pass
             else:
                 self.logger.warning(f"Unknown item ID {server_item.item} received at slot {ctx.next_item_slot}")
 

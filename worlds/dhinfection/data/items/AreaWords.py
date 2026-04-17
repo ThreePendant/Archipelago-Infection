@@ -7,7 +7,7 @@ ADDRESS = 0xa44c0c
 CURRENTLY_ENTERED_ADDRESS = 0xADA71C
 
 
-class InfectionAreaWordListBase(Enum):
+class AreaWordBase(Enum):
     @classmethod
     def from_id(self, id: int):
         for member in self:
@@ -19,7 +19,7 @@ class InfectionAreaWordListBase(Enum):
         return [member for member in self if member.value["importance"] == importance]
 
 
-class InfectionAreaWords(InfectionAreaWordListBase):
+class AreaWords(AreaWordBase):
     Bursting = {"id": 0, "importance": ItemClassification.progression}
     Hidden = {"id": 1, "importance": ItemClassification.progression}
     Expansive = {"id": 2, "importance": ItemClassification.progression}
@@ -182,9 +182,7 @@ class InfectionAreaWords(InfectionAreaWordListBase):
     TriPansy = {"id": 159, "importance": ItemClassification.progression}
     TreasureGem = {"id": 160, "importance": ItemClassification.progression}
     Passionate = {"id": 296, "importance": ItemClassification.filler}
-
-
-class ExtraAreaWords(InfectionAreaWordListBase):
+    #  Below are not used in Infection
     Stalking = {"id": 161, "importance": ItemClassification.filler}
     Bitter = {"id": 162, "importance": ItemClassification.filler}
     Barking = {"id": 163, "importance": ItemClassification.filler}

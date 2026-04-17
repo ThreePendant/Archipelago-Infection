@@ -5,16 +5,13 @@ from BaseClasses import Item, ItemClassification
 ADDRESS = 0xa41bf0
 
 
-class InfectionPartyMemberBase(Enum):
+class PartyMembers(Enum):
     @classmethod
     def from_id(self, id: int):
         for member in self:
             if member.value["id"] == id:
                 return member
         return None
-
-
-class InfectionPartyMembers(InfectionPartyMemberBase):
     Mia = {"id": 1, "importance": ItemClassification.progression}
     Orca = {"id": 2, "importance": ItemClassification.progression}
     Marlo = {"id": 3, "importance": ItemClassification.useful}
