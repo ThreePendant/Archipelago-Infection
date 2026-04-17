@@ -202,6 +202,14 @@ class ItemNames(Enum):
     VirusCoreA = "Virus Core A"
     VirusCoreB = "Virus Core B"
     VirusCoreC = "Virus Core C"
+    RyuBookI = "Ryu Book I"
+    RyuBookII = "Ryu Book II"
+    RyuBookIII = "Ryu Book III"
+    RyuBookIV = "Ryu Book IV"
+    RyuBookV = "Ryu Book V"
+    RyuBookVI = "Ryu Book VI"
+    RyuBookVII = "Ryu Book VII"
+    RyuBookVIII = "Ryu Book VIII"
 
 
 class AreaWordNames(Enum):
