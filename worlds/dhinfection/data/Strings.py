@@ -75,9 +75,9 @@ class APHelper(Enum):
 
 class Meta(Enum):
     _value_: str
-    game: str = ".hack//INFECTION"
-    platform: str = "PS2"
-    supported_versions: Sequence[str] = ["SLUS-20267"]
+    game = ".hack//INFECTION"
+    platform = "PS2"
+    supported_versions = ["SLUS-20267"]
 
 
 class InfectionGameStateNames(Enum):
