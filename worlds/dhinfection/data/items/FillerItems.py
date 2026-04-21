@@ -1,8 +1,6 @@
 from enum import IntEnum, auto, Enum
 from BaseClasses import Item, ItemClassification
 
-STORAGE_ADDRESS = 0xa40543
-
 
 class Consumables(Enum):
     HealthDrink = {"id": 0x000a0000}

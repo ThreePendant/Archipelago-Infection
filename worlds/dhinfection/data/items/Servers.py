@@ -1,8 +1,6 @@
 from enum import Enum
 from BaseClasses import Item, ItemClassification
 
-ADDRESS = 0xa41c04
-
 
 class Servers(Enum):
     @classmethod

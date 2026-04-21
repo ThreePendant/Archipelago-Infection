@@ -115,6 +115,7 @@ class InfectionContext(SuperContext):
     last_item_processed_index = -1
 
     # Player Set Settings
+    volume: int = 1
     settings: InfectionSettings
     always_online_party_members: bool = False
     automatically_read_emails: bool = False
@@ -131,9 +132,9 @@ class InfectionContext(SuperContext):
 
     def __init__(self, address: str, password: str | None = None,):
         super().__init__(address, password)
-        self.ipc = InfectionInterface(logger)
         Utils.init_logging(APConsole.Info.client_name_clean.value + self.client_version)
         self.settings = get_settings().get("dhinfection_options", {})
+
         self.always_online_party_members = self.settings.get("always_online_party_members", False)
         self.automatically_read_emails = self.settings.get("automatically_read_emails", False)
         self.completion_condition = self.settings.get("completion_condition", 0)
@@ -146,6 +147,8 @@ class InfectionContext(SuperContext):
         self.symbols_activated = self.settings.get("symbols_activated", 10)
         self.data_drains = self.settings.get("data_drains", 30)
         self.kite_levels = self.settings.get("kite_levels", 25)
+
+        self.ipc = InfectionInterface(logger, self.volume)
 
     # Archipelago Server Authentication
     async def server_auth(self, password_requested: bool = False) -> None:
@@ -279,7 +282,8 @@ async def check_game(ctx: InfectionContext):
         if ctx.last_item_processed_index < 0:
             ctx.last_item_processed_index = ctx.ipc.get_last_item_index()
 
-        ctx.ipc.initial_state()
+        if ctx.volume == 1:
+            ctx.ipc.infection_initial_state()
 
         await ctx.ipc.check_locations(ctx)
         await ctx.ipc.receive_items(ctx)

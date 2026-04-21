@@ -2,9 +2,6 @@ from enum import IntEnum, auto, Enum
 from BaseClasses import Item, ItemClassification
 
 
-ADDRESS = 0xa41bf0
-
-
 class PartyMembers(Enum):
     @classmethod
     def from_id(self, id: int):

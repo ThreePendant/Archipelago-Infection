@@ -2,11 +2,6 @@ from enum import IntFlag, Flag, auto, IntEnum, Enum
 from BaseClasses import Item, ItemClassification
 
 
-ADDRESS = 0xa44c0c
-
-CURRENTLY_ENTERED_ADDRESS = 0xADA71C
-
-
 class AreaWordBase(Enum):
     @classmethod
     def from_id(self, id: int):

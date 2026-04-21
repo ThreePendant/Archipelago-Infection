@@ -45,6 +45,7 @@ class APHelper(Enum):
     arg_tags = "tags"
 
     version = "version"
+    volume = "volume"
 
     # AP Options
     always_online_party_members = "always_online_party_members"

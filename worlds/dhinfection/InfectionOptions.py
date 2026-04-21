@@ -6,6 +6,16 @@ from Options import OptionGroup, Toggle, DefaultOnToggle, Choice, PerGameCommonO
 from .data.Strings import APHelper
 
 
+class Volume(Choice):
+    """
+    Choose the volume of the game.
+    Default: 1
+    """
+    display_name = "Volume"
+    option_infection = 1
+    default = 1
+
+
 class AlwaysOnlinePartyMembers(Toggle):
     """
     Choose if party members should always be available.
@@ -133,10 +143,8 @@ class KiteLevels(Range):
 
 
 infection_option_groups: dict[str, list] = {
-    "Sync Options": [
-        DeathLink,
-    ],
     "Quest Options": [
+        Volume,
         CompletionCondition,
     ],
     "Quality of Life Options": [
@@ -153,6 +161,9 @@ infection_option_groups: dict[str, list] = {
         SymbolsActivated,
         DataDrains,
         KiteLevels,
+    ],
+    "Sync Options": [
+        DeathLink,
     ],
 }
 
@@ -172,6 +183,7 @@ class InfectionOptions(PerGameCommonOptions):
     data_drains: DataDrains
     kite_levels: KiteLevels
     death_link: DeathLink
+    volume: Volume
 
 
 def create_option_groups() -> list[OptionGroup]:
@@ -196,4 +208,5 @@ def slot_data_options() -> list[str]:
         APHelper.data_drains.value,
         APHelper.kite_levels.value,
         APHelper.death_link.value,
+        APHelper.volume.value,
     ]

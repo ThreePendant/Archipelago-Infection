@@ -26,6 +26,7 @@ from .data.Items import InfectionWordListItem as WordListItem, PartyMemberItem, 
 from .data.Items import WordListItems, ConsumableItems, VirusCoreItems
 from .data.Items import ServerItems
 from .data.Items import PartyMemberItems
+from .data.Addresses import VolumeAddresses, InfectionAddresses, MutationAddresses, OutbreakAddresses, QuarantineAddresses
 # Notes:
 # latest item idx can seemingly be written to 0xA44EC8 safely.
 # game doesn't seem to use it for anything.
@@ -43,9 +44,17 @@ class InfectionInterface:
     status: ConnectionStatus = ConnectionStatus.DISCONNECTED.value
     logger: Logger
     loaded_game: Optional[str] = None
+    volume: int
+    addresses: VolumeAddresses = None
 
-    def __init__(self, logger: Logger):
+    def __init__(self, logger: Logger, volume: int):
         self.logger = logger
+        self.volume = volume
+        match volume:
+            case 1: self.addresses = InfectionAddresses
+            case 2: self.addresses = MutationAddresses
+            case 3: self.addresses = OutbreakAddresses
+            case 4: self.addresses = QuarantineAddresses
 
     def connect_game(self) -> None:
         if not self.pine.is_connected():
@@ -86,11 +95,9 @@ class InfectionInterface:
             return False
 
     def get_ingame_status(self) -> GameStateNames | None:
-        address = 0xa3f5f0
-        overlay_address = 0x00400804
         try:
-            st_val = self.pine.read_int8(address)
-            overlay_val = self.pine.read_int8(overlay_address)
+            st_val = self.pine.read_int8(self.addresses.IngameStatus)
+            overlay_val = self.pine.read_int8(self.addresses.IngameOverlay)
             if overlay_val == 0:
                 return None
             status = GameStateNames[GameState(st_val).name]
@@ -106,12 +113,12 @@ class InfectionInterface:
             return None
 
     def get_last_item_index(self) -> int:
-        return self.pine.read_int32(0xa44ec8)
+        return self.pine.read_int32(self.addresses.LastItemIdx)
 
     def set_last_item_index(self, index: int) -> None:
-        self.pine.write_int32(0xa44ec8, index)
+        self.pine.write_int32(self.addresses.LastItemIdx, index)
 
-    def initial_state(self) -> None:
+    def infection_initial_state(self) -> None:
         # # Read emails before meeting Orca
         # email_state(0x04, 4) # Registered yet?
         # email_state(0x05, 4) # Thank You
@@ -179,6 +186,7 @@ class InfectionInterface:
                 return
 
         def stat_check(stat: PlayStats):
+            addr = self.addresses.PlayStats[stat.name]
             try:
                 val: int = self.pine.read_int16(stat.value["addr"])
                 name: str = PlayStatNames[stat.name].value
@@ -350,7 +358,7 @@ class InfectionInterface:
         self.pine.write_int8(addr, curr_amt + 1)
 
     async def scan_server(self, ctx) -> None:
-        addr: int = 0xa41c04
+        addr: int = self.addresses.Servers
         unlocked_servers: int = self.pine.read_int8(addr)
         val = unlocked_servers
         for server in Servers:
@@ -364,7 +372,7 @@ class InfectionInterface:
         """
         Scans the party member list and locks/unlocks based on whether the party member is in ctx.unlocked_party_members
         """
-        addr: int = 0xa41bf0
+        addr: int = self.addresses.Party
         try:
             val = self.pine.read_int32(addr)
             new_val = val

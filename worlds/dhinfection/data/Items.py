@@ -5,10 +5,13 @@ import random
 
 from BaseClasses import Item, ItemClassification
 from .Strings import APHelper, Meta, CharacterNames, ServerNames, ItemNames
-from .items.PartyMembers import PartyMembers, ADDRESS as PartyMemberAddress
-from .items.Servers import Servers, ADDRESS as ServerAddress
-from .locations.WordList import WordListBase, InfectionDeltaWordList, InfectionThetaWordList, get_wordlist_name, ADDRESS as WordListAddress
-from .items.FillerItems import Consumables, VirusCores, STORAGE_ADDRESS
+from .items.PartyMembers import PartyMembers
+from .items.Servers import Servers
+from .locations.WordList import WordListBase, InfectionDeltaWordList, InfectionThetaWordList, get_wordlist_name
+from .items.FillerItems import Consumables, VirusCores
+
+# Using Infection for IDs
+from .Addresses import InfectionAddresses as Addresses
 
 
 class InfectionItem(Item):
@@ -34,7 +37,7 @@ class InfectionWordListItem(InfectionItemMeta):
         self.name = name
         self.classification = wordlist.value["importance"]
         self.wordlist = wordlist
-        self.item_id = self.wordlist.value["address"] * 125 + WordListAddress
+        self.item_id = self.wordlist.value["address"] * 125 + Addresses.WordLists
 
     def to_item(self, player: int) -> InfectionItem:
         return InfectionItem(
@@ -119,13 +122,13 @@ for consumable in Consumables:
     ConsumableItems.append(ConsumableItem(
         name=ItemNames[consumable.name].value,
         item=consumable,
-        address=STORAGE_ADDRESS + consumable.value["id"]
+        address=Addresses.Storage + consumable.value["id"]
     ))
 for virus_core in VirusCores:
     VirusCoreItems.append(VirusCoreItem(
         name=ItemNames[virus_core.name].value,
         item=virus_core,
-        address=STORAGE_ADDRESS + virus_core.value["id"]
+        address=Addresses.Storage + virus_core.value["id"]
     ))
 
 for wordlist in InfectionDeltaWordList:
@@ -145,7 +148,7 @@ for member in PartyMembers:
         party_member=member,
         name=CharacterNames[member.name].value,
         id=member.value["id"],
-        address=PartyMemberAddress + member.value["id"],
+        address=Addresses.Party + member.value["id"],
         type=member.value["importance"]
     ))
 
@@ -154,7 +157,7 @@ for server in Servers:
         server=server,
         name=ServerNames[server.name].value,
         id=server.value["id"],
-        address=ServerAddress + server.value["id"],
+        address=Addresses.Servers + server.value["id"],
         type=server.value["importance"]
     ))
 

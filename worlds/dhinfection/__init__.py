@@ -80,6 +80,7 @@ class InfectionSettings(settings.Group):
     opened_portals: GenerationPreferences | int = 100
     cleared_portals: GenerationPreferences | int = 10
     gott_treasures: GenerationPreferences | int = 10
+    volume: GenerationPreferences | int = 1
 
 
 class InfectionWeb(WebWorld):

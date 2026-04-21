@@ -1,9 +1,7 @@
 from enum import Enum
-from BaseClasses import Item, ItemClassification
+from BaseClasses import ItemClassification
 from ..items.AreaWords import AreaWords
 from ..Strings import AreaWordNames
-
-ADDRESS = 0xa44c47
 
 
 class WordListBase(Enum):
