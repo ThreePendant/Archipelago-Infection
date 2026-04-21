@@ -188,7 +188,7 @@ class InfectionInterface:
         def stat_check(stat: PlayStats):
             addr = self.addresses.PlayStats[stat.name]
             try:
-                val: int = self.pine.read_int16(stat.value["addr"])
+                val: int = self.pine.read_int16(addr)
                 name: str = PlayStatNames[stat.name].value
                 if stat.value["scale"] == "list":
                     for i in stat.value["values"]:
@@ -224,7 +224,7 @@ class InfectionInterface:
         # Golden Goblins
         for goblin in GoldenGoblins:
             name: str = EventNames[goblin.name].value
-            addr: int = goblin.value["address"]
+            addr: int = self.addresses.Events[goblin.name]
             bitflags: int = goblin.value["bits"]
             loc_id = get_location_id(name)
             if loc_id is None:
@@ -234,7 +234,7 @@ class InfectionInterface:
         # Optional Party Members
         for member in OptionalPartyMembers:
             name: str = EventNames[member.name].value
-            addr: int = member.value["address"]
+            addr: int = self.addresses.Events[member.name]
             bitflags: int = member.value["bits"]
             loc_id = get_location_id(name)
             if loc_id is None:
@@ -295,7 +295,7 @@ class InfectionInterface:
                     self.add_consumable(item)
                 elif isinstance(item, VirusCoreItem):
                     """Add item to inventory"""
-                    self.add_key(item.item.value["id"])
+                    self.add_key(self.addresses.Items[item.item.name])
                 elif isinstance(item, WordListItem):
                     """Add to list of word lists to unlock"""
                     ctx.unlocked_word_lists.add(item.wordlist.value["address"])
@@ -340,7 +340,7 @@ class InfectionInterface:
         self.set_last_item_index(len(ctx.items_received))
 
     def add_consumable(self, item_obj: ConsumableItem) -> None:
-        addr: int = 0xa40540
+        addr: int = self.addresses.Storage
         item: int = item_obj.item.value["id"]
         for i in range(addr, addr + 396, 4):
             curr: int = self.pine.read_int32(i)
