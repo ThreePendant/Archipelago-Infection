@@ -27,11 +27,11 @@ except ImportError:
 
 tracker_loaded: bool = False
 try:
-    from worlds.tracker.TrackerClient import (
-        ClientCommandProcessor, TrackerGameContext as SuperContext, get_base_parser, server_loop)
+    from worlds.tracker.TrackerClient import (  # pyrefly: ignore
+        ClientCommandProcessor, TrackerGameContext as SuperContext, get_base_parser, server_loop)  # pyrefly: ignore
     tracker_loaded = True
     if not gui_loaded_from_utils:
-        from worlds.tracker.TrackerClient import gui_enabled
+        from worlds.tracker.TrackerClient import gui_enabled  # pyrefly: ignore
 except ImportError:
     from CommonClient import (
         ClientCommandProcessor, CommonContext as SuperContext, get_base_parser, server_loop)
@@ -384,8 +384,8 @@ async def main():
     multiprocessing.freeze_support()
 
     # # Parse command line
-    parser: ArgumentParser = get_base_parser()
-    args: Namespace = parser.parse_args()
+    parser = get_base_parser()
+    args = parser.parse_args()
 
     # Create game context
     ctx = InfectionContext(args.connect, args.password)
