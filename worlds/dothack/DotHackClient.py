@@ -9,11 +9,10 @@ from settings import get_settings
 import Utils
 
 from . import InfectionSettings
-from .data.Strings import APConsole, APHelper, GameStateNames, CharacterNames, AreaWordNames, Meta
+from .data.Strings import APConsole, APHelper, Meta
 from .DotHackInterface import DotHackInterface, ConnectionStatus
 from .data import Locations, Items
 
-from .data.locations.WordList import WordListBase
 from .data.items.PartyMembers import PartyMembers
 from .data.items.Servers import Servers
 from .data.items.AreaWords import AreaWords

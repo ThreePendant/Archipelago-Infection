@@ -1,4 +1,4 @@
-from enum import IntEnum, auto, Enum
+from enum import Enum
 
 
 class InfectionEventBase(Enum):

@@ -1,5 +1,4 @@
-from enum import IntEnum, auto, Enum
-from BaseClasses import Item, ItemClassification
+from enum import Enum
 
 
 class Consumables(Enum):

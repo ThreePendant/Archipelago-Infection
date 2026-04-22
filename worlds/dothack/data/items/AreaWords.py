@@ -1,5 +1,5 @@
-from enum import IntFlag, Flag, auto, IntEnum, Enum
-from BaseClasses import Item, ItemClassification
+from enum import Enum
+from BaseClasses import ItemClassification
 
 
 class AreaWordBase(Enum):

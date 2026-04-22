@@ -10,8 +10,7 @@ from typing import Optional, List, Set
 
 from NetUtils import NetworkItem
 from .pcsx2_interface.pine import Pine
-from . import InfectionItem
-from .data.Strings import APConsole, Meta, GameStateNames, AreaWordNames, EventNames
+from .data.Strings import APConsole, Meta, GameStateNames, EventNames
 from .data.GameState import InfectionGameState as GameState
 from .data.locations.WordList import InfectionDeltaWordList as DeltaWordList, InfectionThetaWordList as ThetaWordList, WordListBase, get_wordlist_name
 from .data.locations.Events import InfectionStoryEvents as StoryEvents, InfectionGoldenGoblins as GoldenGoblins, InfectionOptionalPartyMembers as OptionalPartyMembers
@@ -19,7 +18,6 @@ from .data.locations.Events import InfectionStoryEvents as StoryEvents, Infectio
 from .data.items.AreaWords import AreaWords
 from .data.items.Servers import Servers
 from .data.items.PartyMembers import PartyMembers
-from .data.items.FillerItems import Consumables, VirusCores
 
 from .data import Items
 from .data.Items import InfectionWordListItem as WordListItem, PartyMemberItem, ServerItem, ConsumableItem, VirusCoreItem
@@ -119,10 +117,6 @@ class DotHackInterface:
         self.pine.write_int32(self.addresses.LastItemIdx, index)
 
     def infection_initial_state(self) -> None:
-        # # Read emails before meeting Orca
-        # email_state(0x04, 4) # Registered yet?
-        # email_state(0x05, 4) # Thank You
-        # email_state(0x140, 4) # Version update
         self.pine.write_int8(0xa44ed7, self.pine.read_int8(0xa44ed7) |
                              0b00000111)  # Not needed when setting emails read
 

@@ -1,5 +1,5 @@
 from enum import Enum
-from BaseClasses import Item, ItemClassification
+from BaseClasses import ItemClassification
 
 
 class Servers(Enum):

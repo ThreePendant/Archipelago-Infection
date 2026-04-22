@@ -1,4 +1,4 @@
-from enum import IntFlag, auto
+from enum import IntFlag
 
 
 class InfectionGameState(IntFlag):
