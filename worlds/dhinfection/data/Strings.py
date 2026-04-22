@@ -6,11 +6,11 @@ class APConsole:
 
     class Info(Enum):
         _value_: str
-        game_name = ".hack//INFECTION Archipelago"
-        client_name = ".hack//INFECTION Client"
-        client_name_clean = "dot hack INFECTION Client"
-        client_ver = "0.0.1"
-        world_ver = "0.0.1"
+        game_name = ".hack//IMOQ Archipelago"
+        client_name = ".hack//IMOQ Client"
+        client_name_clean = "dot hack IMOQ Client"
+        client_ver = "0.1.0"
+        world_ver = "0.1.0"
         p_check = "Confirming PCSX2 Status..."
         p_init = "Connecting to PCSX2..."
         p_init_g = "Confirming running game..."
@@ -76,7 +76,7 @@ class APHelper(Enum):
 
 class Meta(Enum):
     _value_: str
-    game = ".hack//INFECTION"
+    game = ".hack//IMOQ"
     platform = "PS2"
     supported_versions = ["SLUS-20267"]
 

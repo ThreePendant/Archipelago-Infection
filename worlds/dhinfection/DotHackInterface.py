@@ -1,7 +1,7 @@
 
-from worlds.dhinfection.data.locations.Events import CompletionConditions
-from worlds.dhinfection.data.locations.PlayStats import PlayStats
-from worlds.dhinfection import PlayStatNames
+from worlds.dothack.data.locations.Events import CompletionConditions
+from worlds.dothack.data.locations.PlayStats import PlayStats
+from worlds.dothack import PlayStatNames
 import math
 import asyncio
 from enum import IntEnum
@@ -39,7 +39,7 @@ class ConnectionStatus(IntEnum):
     IN_GAME = 2
 
 
-class InfectionInterface:
+class DotHackInterface:
     pine: Pine = Pine()
     status: ConnectionStatus = ConnectionStatus.DISCONNECTED.value
     logger: Logger

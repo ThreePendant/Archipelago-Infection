@@ -10,7 +10,7 @@ import Utils
 
 from . import InfectionSettings
 from .data.Strings import APConsole, APHelper, GameStateNames, CharacterNames, AreaWordNames, Meta
-from .InfectionInterface import InfectionInterface, ConnectionStatus
+from .DotHackInterface import DotHackInterface, ConnectionStatus
 from .data import Locations, Items
 
 from .data.locations.WordList import WordListBase
@@ -86,7 +86,7 @@ class InfectionContext(SuperContext):
     tags: set[str] = {"AP"}
 
     # Interface Properties
-    ipc: InfectionInterface = InfectionInterface
+    ipc: DotHackInterface = DotHackInterface
     is_game_connected: bool = bool(ConnectionStatus.DISCONNECTED.value)
     has_just_connected: bool = False
     interface_sync_task: asyncio.tasks = None
@@ -133,7 +133,7 @@ class InfectionContext(SuperContext):
     def __init__(self, address: str, password: str | None = None,):
         super().__init__(address, password)
         Utils.init_logging(APConsole.Info.client_name_clean.value + self.client_version)
-        self.settings = get_settings().get("dhinfection_options", {})
+        self.settings = get_settings().get("dothack_options", {})
 
         self.always_online_party_members = self.settings.get("always_online_party_members", False)
         self.automatically_read_emails = self.settings.get("automatically_read_emails", False)
@@ -148,7 +148,7 @@ class InfectionContext(SuperContext):
         self.data_drains = self.settings.get("data_drains", 30)
         self.kite_levels = self.settings.get("kite_levels", 25)
 
-        self.ipc = InfectionInterface(logger, self.volume)
+        self.ipc = DotHackInterface(logger, self.volume)
 
     # Archipelago Server Authentication
     async def server_auth(self, password_requested: bool = False) -> None:

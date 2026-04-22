@@ -9,20 +9,20 @@ class PartyMembers(Enum):
             if member.value["id"] == id:
                 return member
         return None
-    Mia = {"id": 1, "importance": ItemClassification.progression}
-    Orca = {"id": 2, "importance": ItemClassification.progression}
-    Marlo = {"id": 3, "importance": ItemClassification.useful}
-    Sanjuro = {"id": 4, "importance": ItemClassification.useful}
-    NukeUsagimaru = {"id": 5, "importance": ItemClassification.useful}
-    Balmung = {"id": 6, "importance": ItemClassification.useful}
-    Moonstone = {"id": 7, "importance": ItemClassification.useful}
-    Piros = {"id": 8, "importance": ItemClassification.progression}
-    Wiseman = {"id": 9, "importance": ItemClassification.useful}
-    Elk = {"id": 10, "importance": ItemClassification.progression}
-    Natsume = {"id": 11, "importance": ItemClassification.useful}
-    Rachel = {"id": 12, "importance": ItemClassification.useful}
-    Gardenia = {"id": 13, "importance": ItemClassification.progression}
-    TerajimaRyoko = {"id": 14, "importance": ItemClassification.useful}
-    BlackRose = {"id": 15, "importance": ItemClassification.progression}
-    Mistral = {"id": 16, "importance": ItemClassification.progression}
-    Helba = {"id": 17, "importance": ItemClassification.useful}
+    Mia = {"id": 1, "classifications": {1: ItemClassification.progression}, "volumes": [1]}
+    Orca = {"id": 2, "classifications": {1: ItemClassification.progression}, "volumes": [1]}
+    Marlo = {"id": 3, "classifications": {1: ItemClassification.useful}, "volumes": [1]}
+    Sanjuro = {"id": 4, "classifications": {1: ItemClassification.useful}, "volumes": [1]}
+    NukeUsagimaru = {"id": 5, "classifications": {1: ItemClassification.useful}, "volumes": [1]}
+    Balmung = {"id": 6, "classifications": {1: ItemClassification.useful}, "volumes": [1]}
+    Moonstone = {"id": 7, "classifications": {1: ItemClassification.useful}, "volumes": [1]}
+    Piros = {"id": 8, "classifications": {1: ItemClassification.progression}, "volumes": [1]}
+    Wiseman = {"id": 9, "classifications": {1: ItemClassification.useful}, "volumes": [1]}
+    Elk = {"id": 10, "classifications": {1: ItemClassification.progression}, "volumes": [1]}
+    Natsume = {"id": 11, "classifications": {1: ItemClassification.useful}, "volumes": [1]}
+    Rachel = {"id": 12, "classifications": {1: ItemClassification.useful}, "volumes": [1]}
+    Gardenia = {"id": 13, "classifications": {1: ItemClassification.progression}, "volumes": [1]}
+    TerajimaRyoko = {"id": 14, "classifications": {1: ItemClassification.useful}, "volumes": [1]}
+    BlackRose = {"id": 15, "classifications": {1: ItemClassification.progression}, "volumes": [1]}
+    Mistral = {"id": 16, "classifications": {1: ItemClassification.progression}, "volumes": [1]}
+    Helba = {"id": 17, "classifications": {1: ItemClassification.useful}, "volumes": [1]}

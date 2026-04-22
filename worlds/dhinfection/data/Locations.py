@@ -1,8 +1,5 @@
 from BaseClasses import LocationProgressType
-from typing import Sequence
-from dataclasses import dataclass
 from abc import ABC
-import copy
 
 from BaseClasses import Location
 
@@ -12,6 +9,7 @@ from .locations.WordList import InfectionDeltaWordList as DeltaWordList, Infecti
 from .locations.PlayStats import PlayStats
 from .Strings import Meta, AreaWordNames, EventNames, PlayStatNames
 from .Addresses import InfectionAddresses as Addresses
+from .DataManager import VOLUME_DATA
 
 
 class InfectionLocation(Location):
@@ -80,25 +78,27 @@ def area_word_gen(enum) -> list[InfectionAreaWordLocation]:
     return res
 
 
-def wordlist_gen(enum) -> list[InfectionWordListLocation]:
+def wordlist_gen(enum, volume: int) -> list[InfectionWordListLocation]:
     res = []
     for wordlist in enum:
-        res.append(InfectionWordListLocation(
-            wordlist
-        ))
+        if volume in wordlist.value.get("volumes", []):
+            res.append(InfectionWordListLocation(
+                wordlist
+            ))
     return res
 
 
-def event_gen(enum) -> list[InfectionEventLocation]:
+def event_gen(enum, volume: int) -> list[InfectionEventLocation]:
     res = []
     for event in enum:
-        name = EventNames[event.name].value
-        res.append(InfectionEventLocation(
-            name=name,
-            location_id=event.value["address"],
-            event=event,
-            bitflags=event.value["bits"]
-        ))
+        if volume in event.value.get("volumes", []):
+            name = EventNames[event.name].value
+            res.append(InfectionEventLocation(
+                name=name,
+                location_id=event.value["address"],
+                event=event,
+                bitflags=event.value["bits"]
+            ))
     return res
 
 
@@ -142,30 +142,51 @@ def playstat_gen(stats: dict[str, int] | None = None) -> list[InfectionPlayStatL
     return res
 
 
-DeltaListLocations = wordlist_gen(DeltaWordList)
-ThetaListLocations = wordlist_gen(ThetaWordList)
 AreaWordLocations = area_word_gen(AreaWords)
-
-StoryEvents: InfectionEventLocation = event_gen(InfectionStoryEvents)
-GoldenGoblins: InfectionEventLocation = event_gen(InfectionGoldenGoblins)
-OptionalPartyMembers: InfectionEventLocation = event_gen(
-    InfectionOptionalPartyMembers)
-CompletionEvents: InfectionEventLocation = event_gen(CompletionConditions)
 PlayStatLocsList = playstat_gen()
 
-WordListLocations: InfectionWordListLocation = [
-    *DeltaListLocations,
-    *ThetaListLocations
-]
 
-EventLocations: InfectionEventLocation = [
-    *StoryEvents,
-    *GoldenGoblins,
-    *OptionalPartyMembers,
-    *CompletionEvents
-]
+def generate_volume_locations(volume: int):
+    v_data = VOLUME_DATA[volume]
+    v_data.wordlist_locations = [
+        *wordlist_gen(DeltaWordList, volume),
+        *wordlist_gen(ThetaWordList, volume)
+    ]
+    v_data.event_locations = [
+        *event_gen(InfectionStoryEvents, volume),
+        *event_gen(InfectionGoldenGoblins, volume),
+        *event_gen(InfectionOptionalPartyMembers, volume),
+        *event_gen(CompletionConditions, volume)
+    ]
 
-PlayStatLocations: InfectionPlayStatLocation = [
+
+for v in VOLUME_DATA:
+    generate_volume_locations(v)
+
+WordListLocations: list[InfectionWordListLocation] = []
+EventLocations: list[InfectionEventLocation] = []
+StoryEvents: list[InfectionEventLocation] = []
+GoldenGoblins: list[InfectionEventLocation] = []
+OptionalPartyMembers: list[InfectionEventLocation] = []
+CompletionEvents: list[InfectionEventLocation] = []
+
+for v_data in VOLUME_DATA.values():
+    for loc in v_data.wordlist_locations:
+        if loc.name not in [l.name for l in WordListLocations]:
+            WordListLocations.append(loc)
+    for loc in v_data.event_locations:
+        if loc.name not in [l.name for l in EventLocations]:
+            EventLocations.append(loc)
+            if isinstance(loc.event, InfectionStoryEvents):
+                StoryEvents.append(loc)
+            elif isinstance(loc.event, InfectionGoldenGoblins):
+                GoldenGoblins.append(loc)
+            elif isinstance(loc.event, InfectionOptionalPartyMembers):
+                OptionalPartyMembers.append(loc)
+            elif isinstance(loc.event, CompletionConditions):
+                CompletionEvents.append(loc)
+
+PlayStatLocations: list[InfectionPlayStatLocation] = [
     *PlayStatLocsList
 ]
 
@@ -187,15 +208,15 @@ def generate_name_to_id() -> dict[str, int]:
     return name_to_id
 
 
-def generate_location_groups() -> dict[str, int]:
-    groups: dict[str: set[str]] = {}
+def generate_location_groups() -> dict[str, set[str]]:
+    groups: dict[str, set[str]] = {}
 
     groups.update({
-        "Story Events": {el.name: el.location_id for el in StoryEvents},
-        "Golden Goblins": {el.name: el.location_id for el in GoldenGoblins},
-        "Optional Party Members": {el.name: el.location_id for el in OptionalPartyMembers},
-        "Play Stats": {el.name: el.location_id for el in PlayStatLocations},
-        "Area Words": {el.name: el.location_id for el in AreaWordLocations},
-        "Word Lists": {el.name: el.location_id for el in WordListLocations}
+        "Story Events": {el.name for el in StoryEvents},
+        "Golden Goblins": {el.name for el in GoldenGoblins},
+        "Optional Party Members": {el.name for el in OptionalPartyMembers},
+        "Play Stats": {el.name for el in PlayStatLocations},
+        "Area Words": {el.name for el in AreaWordLocations},
+        "Word Lists": {el.name for el in WordListLocations}
     })
     return groups

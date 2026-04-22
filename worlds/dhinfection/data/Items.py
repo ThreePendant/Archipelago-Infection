@@ -1,7 +1,5 @@
 from collections.abc import Sequence
-from dataclasses import dataclass
 from abc import ABC
-import random
 
 from BaseClasses import Item, ItemClassification
 from .Strings import APHelper, Meta, CharacterNames, ServerNames, ItemNames
@@ -9,6 +7,7 @@ from .items.PartyMembers import PartyMembers
 from .items.Servers import Servers
 from .locations.WordList import WordListBase, InfectionDeltaWordList, InfectionThetaWordList, get_wordlist_name
 from .items.FillerItems import Consumables, VirusCores
+from .DataManager import VOLUME_DATA
 
 # Using Infection for IDs
 from .Addresses import InfectionAddresses as Addresses
@@ -33,9 +32,9 @@ class InfectionItemMeta(ABC):
 
 
 class InfectionWordListItem(InfectionItemMeta):
-    def __init__(self, name, wordlist: WordListBase):
+    def __init__(self, name, wordlist: WordListBase, volume: int):
         self.name = name
-        self.classification = wordlist.value["importance"]
+        self.classification = wordlist.value["classifications"].get(volume, ItemClassification.filler)
         self.wordlist = wordlist
         self.item_id = self.wordlist.value["address"] * 125 + Addresses.WordLists
 
@@ -49,10 +48,10 @@ class InfectionWordListItem(InfectionItemMeta):
 
 
 class PartyMemberItem(InfectionItemMeta):
-    def __init__(self, party_member, name, id, address, type):
+    def __init__(self, party_member, name, id, address, volume: int):
         self.name = name
         self.item_id = (address * 268) + (id * 10)
-        self.classification = type
+        self.classification = party_member.value["classifications"].get(volume, ItemClassification.filler)
         self.party_member = party_member
 
     def to_item(self, player: int) -> InfectionItem:
@@ -65,11 +64,11 @@ class PartyMemberItem(InfectionItemMeta):
 
 
 class ServerItem(InfectionItemMeta):
-    def __init__(self, server, name, id, address, type):
+    def __init__(self, server, name, id, address, volume: int):
         self.server: Servers = server
         self.name = name
         self.item_id = (address * 723) + (id * 10)
-        self.classification = type
+        self.classification = server.value["classifications"].get(volume, ItemClassification.filler)
 
     def to_item(self, player: int) -> InfectionItem:
         return InfectionItem(
@@ -112,9 +111,6 @@ class VirusCoreItem(InfectionItemMeta):
         )
 
 
-WordListItems: list[InfectionWordListItem] = []
-PartyMemberItems: list[PartyMemberItem] = []
-ServerItems: list[ServerItem] = []
 ConsumableItems: list[ConsumableItem] = []
 VirusCoreItems: list[VirusCoreItem] = []
 
@@ -131,35 +127,78 @@ for virus_core in VirusCores:
         address=Addresses.Storage + virus_core.value["id"]
     ))
 
-for wordlist in InfectionDeltaWordList:
-    WordListItems.append(InfectionWordListItem(
-        name=get_wordlist_name(wordlist),
-        wordlist=wordlist
-    ))
 
-for wordlist in InfectionThetaWordList:
-    WordListItems.append(InfectionWordListItem(
-        name=get_wordlist_name(wordlist),
-        wordlist=wordlist
-    ))
+def generate_volume_items(volume: int):
+    v_data = VOLUME_DATA[volume]
+    v_data.wordlist_items = []
+    v_data.party_member_items = []
+    v_data.server_items = []
 
-for member in PartyMembers:
-    PartyMemberItems.append(PartyMemberItem(
-        party_member=member,
-        name=CharacterNames[member.name].value,
-        id=member.value["id"],
-        address=Addresses.Party + member.value["id"],
-        type=member.value["importance"]
-    ))
+    for wordlist in InfectionDeltaWordList:
+        if volume in wordlist.value.get("volumes", []):
+            v_data.wordlist_items.append(InfectionWordListItem(
+                name=get_wordlist_name(wordlist),
+                wordlist=wordlist,
+                volume=volume
+            ))
 
-for server in Servers:
-    ServerItems.append(ServerItem(
-        server=server,
-        name=ServerNames[server.name].value,
-        id=server.value["id"],
-        address=Addresses.Servers + server.value["id"],
-        type=server.value["importance"]
-    ))
+    for wordlist in InfectionThetaWordList:
+        if volume in wordlist.value.get("volumes", []):
+            v_data.wordlist_items.append(InfectionWordListItem(
+                name=get_wordlist_name(wordlist),
+                wordlist=wordlist,
+                volume=volume
+            ))
+
+    for member in PartyMembers:
+        if volume in member.value.get("volumes", []):
+            v_data.party_member_items.append(PartyMemberItem(
+                party_member=member,
+                name=CharacterNames[member.name].value,
+                id=member.value["id"],
+                address=Addresses.Party + member.value["id"],
+                volume=volume
+            ))
+
+    for server in Servers:
+        if volume in server.value.get("volumes", []):
+            v_data.server_items.append(ServerItem(
+                server=server,
+                name=ServerNames[server.name].value,
+                id=server.value["id"],
+                address=Addresses.Servers + server.value["id"],
+                volume=volume
+            ))
+
+    v_data.items = [
+        *v_data.party_member_items,
+        *v_data.server_items,
+        *v_data.wordlist_items,
+        *ConsumableItems,
+        *VirusCoreItems
+    ]
+
+
+for v in VOLUME_DATA:
+    generate_volume_items(v)
+
+WordListItems: list[InfectionWordListItem] = []
+for v_data in VOLUME_DATA.values():
+    for item in v_data.wordlist_items:
+        if item not in WordListItems:
+            WordListItems.append(item)
+
+PartyMemberItems: list[PartyMemberItem] = []
+for v_data in VOLUME_DATA.values():
+    for item in v_data.party_member_items:
+        if item not in PartyMemberItems:
+            PartyMemberItems.append(item)
+
+ServerItems: list[ServerItem] = []
+for v_data in VOLUME_DATA.values():
+    for item in v_data.server_items:
+        if item not in ServerItems:
+            ServerItems.append(item)
 
 ITEMS_MASTER: Sequence[Sequence] = [
     *PartyMemberItems,
@@ -191,17 +230,17 @@ def generate_name_to_id() -> dict[str: int]:
     return {i.name: i.item_id for i in ITEMS_MASTER}
 
 
-def generate_item_groups() -> dict[str: list[int]]:
-    groups: dict[str: set[str]] = {}
+def generate_item_groups() -> dict[str, set[str]]:
+    groups: dict[str, set[str]] = {}
     i: InfectionItemMeta
     for i in PartyMemberItems:
-        groups.setdefault(APHelper.party_members.value, set()).add("Party Members")
+        groups.setdefault(APHelper.party_members.value, set()).add(i.name)
     for i in ServerItems:
-        groups.setdefault(APHelper.servers.value, set()).add("Servers")
+        groups.setdefault(APHelper.servers.value, set()).add(i.name)
     for i in WordListItems:
-        groups.setdefault(APHelper.word_lists.value, set()).add("Word Lists")
+        groups.setdefault(APHelper.word_lists.value, set()).add(i.name)
     for i in ConsumableItems:
-        groups.setdefault(APHelper.consumables.value, set()).add("Consumables")
+        groups.setdefault(APHelper.consumables.value, set()).add(i.name)
     for i in VirusCoreItems:
-        groups.setdefault(APHelper.virus_cores.value, set()).add("Virus Cores")
+        groups.setdefault(APHelper.virus_cores.value, set()).add(i.name)
     return groups

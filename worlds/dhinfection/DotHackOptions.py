@@ -169,7 +169,7 @@ infection_option_groups: dict[str, list] = {
 
 
 @dataclass
-class InfectionOptions(PerGameCommonOptions):
+class DotHackOptions(PerGameCommonOptions):
     always_online_party_members: AlwaysOnlinePartyMembers
     automatically_read_emails: AutomaticallyReadEmails
     completion_condition: CompletionCondition

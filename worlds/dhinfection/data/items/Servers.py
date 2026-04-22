@@ -9,8 +9,8 @@ class Servers(Enum):
             if member.value["id"] == id:
                 return member
         return None
-    Delta = {"id": 0, "importance": ItemClassification.progression}
-    Theta = {"id": 1, "importance": ItemClassification.progression}
-    Lambda = {"id": 2, "importance": ItemClassification.useful}
-    Sigma = {"id": 3, "importance": ItemClassification.useful}
-    Omega = {"id": 4, "importance": ItemClassification.useful}
+    Delta = {"id": 0, "classifications": {1: ItemClassification.progression}, "volumes": [1]}
+    Theta = {"id": 1, "classifications": {1: ItemClassification.progression}, "volumes": [1]}
+    Lambda = {"id": 2, "classifications": {1: ItemClassification.useful}, "volumes": [1]}
+    Sigma = {"id": 3, "classifications": {1: ItemClassification.useful}, "volumes": [1]}
+    Omega = {"id": 4, "classifications": {1: ItemClassification.useful}, "volumes": [1]}
