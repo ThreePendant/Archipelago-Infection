@@ -71,6 +71,7 @@ class APHelper(Enum):
     filler = "Filler Items"
     virus_cores = "Virus Cores"
     consumables = "Consumables"
+    ryu_books = "Ryu Books"
 
 
 class Meta(Enum):

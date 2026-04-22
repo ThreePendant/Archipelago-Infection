@@ -7,6 +7,7 @@ from .items.PartyMembers import PartyMembers
 from .items.Servers import Servers
 from .locations.WordList import WordListBase, InfectionDeltaWordList, InfectionThetaWordList, get_wordlist_name
 from .items.FillerItems import Consumables, VirusCores
+from .items.RyuBooks import RyuBooks
 from .DataManager import VOLUME_DATA
 
 # Using Infection for IDs
@@ -80,11 +81,13 @@ class ServerItem(InfectionItemMeta):
 
 
 class ConsumableItem(InfectionItemMeta):
+    consumable: Consumables
+
     def __init__(self, name, item, address):
         self.name = name
         self.item_id = (address * 38) + item.value["id"]
         self.classification = ItemClassification.filler
-        self.item = item
+        self.consumable = item
 
     def to_item(self, player: int) -> InfectionItem:
         return InfectionItem(
@@ -96,11 +99,31 @@ class ConsumableItem(InfectionItemMeta):
 
 
 class VirusCoreItem(InfectionItemMeta):
+    virus_core: VirusCores
+
     def __init__(self, name, item, address):
         self.name = name
         self.item_id = (address * 94) + item.value["id"]
         self.classification = ItemClassification.filler
-        self.item = item
+        self.virus_core = item
+
+    def to_item(self, player: int) -> InfectionItem:
+        return InfectionItem(
+            name=self.name,
+            code=self.item_id,
+            player=player,
+            classification=self.classification
+        )
+
+
+class RyuBookItem(InfectionItemMeta):
+    ryu_book: RyuBooks
+
+    def __init__(self, name, item, address):
+        self.name = name
+        self.item_id = (address * 42)
+        self.classification = ItemClassification.progression
+        self.ryu_book = item
 
     def to_item(self, player: int) -> InfectionItem:
         return InfectionItem(
@@ -113,6 +136,7 @@ class VirusCoreItem(InfectionItemMeta):
 
 ConsumableItems: list[ConsumableItem] = []
 VirusCoreItems: list[VirusCoreItem] = []
+RyuBookItems: list[RyuBookItem] = []
 
 for consumable in Consumables:
     ConsumableItems.append(ConsumableItem(
@@ -125,6 +149,12 @@ for virus_core in VirusCores:
         name=ItemNames[virus_core.name].value,
         item=virus_core,
         address=Addresses.Storage + virus_core.value["id"]
+    ))
+for ryu_book in RyuBooks:
+    RyuBookItems.append(RyuBookItem(
+        name=ItemNames[ryu_book.name].value,
+        item=ryu_book,
+        address=Addresses.Items[ryu_book.name]
     ))
 
 
@@ -175,7 +205,8 @@ def generate_volume_items(volume: int):
         *v_data.server_items,
         *v_data.wordlist_items,
         *ConsumableItems,
-        *VirusCoreItems
+        *VirusCoreItems,
+        *RyuBookItems
     ]
 
 
@@ -205,7 +236,8 @@ ITEMS_MASTER: Sequence[Sequence] = [
     *ServerItems,
     *WordListItems,
     *ConsumableItems,
-    *VirusCoreItems
+    *VirusCoreItems,
+    *RyuBookItems
 ]
 
 ITEMS_INDEX: Sequence[Sequence] = [
@@ -214,7 +246,8 @@ ITEMS_INDEX: Sequence[Sequence] = [
     ServerItems,
     WordListItems,
     ConsumableItems,
-    VirusCoreItems
+    VirusCoreItems,
+    RyuBookItems
 ]
 
 
@@ -243,4 +276,6 @@ def generate_item_groups() -> dict[str, set[str]]:
         groups.setdefault(APHelper.consumables.value, set()).add(i.name)
     for i in VirusCoreItems:
         groups.setdefault(APHelper.virus_cores.value, set()).add(i.name)
+    for i in RyuBookItems:
+        groups.setdefault(APHelper.ryu_books.value, set()).add(i.name)
     return groups

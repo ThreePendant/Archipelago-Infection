@@ -18,10 +18,11 @@ from .data.locations.Events import InfectionStoryEvents as StoryEvents, Infectio
 from .data.items.AreaWords import AreaWords
 from .data.items.Servers import Servers
 from .data.items.PartyMembers import PartyMembers
+from .data.items.RyuBooks import RyuBooks
 
 from .data import Items
-from .data.Items import InfectionWordListItem as WordListItem, PartyMemberItem, ServerItem, ConsumableItem, VirusCoreItem
-from .data.Items import WordListItems, ConsumableItems, VirusCoreItems
+from .data.Items import InfectionWordListItem as WordListItem, PartyMemberItem, ServerItem, ConsumableItem, VirusCoreItem, RyuBookItem
+from .data.Items import WordListItems, ConsumableItems, VirusCoreItems, RyuBookItems
 from .data.Items import ServerItems
 from .data.Items import PartyMemberItems
 from .data.Addresses import VolumeAddresses, InfectionAddresses, MutationAddresses, OutbreakAddresses, QuarantineAddresses
@@ -124,15 +125,16 @@ class DotHackInterface:
         self.pine.write_int8(0xA46141, 1)  # Unlock Data Drain skill category
         self.pine.write_int8(0xA41894, 2)  # Unlock Data Drain, use red dye
 
-        # Give Ryu Books
-        self.pine.write_int8(0xA407DD, 1)
-        self.pine.write_int8(0xA407DE, 1)
-        self.pine.write_int8(0xA407DF, 1)
-        self.pine.write_int8(0xA407E0, 1)
-        self.pine.write_int8(0xA407E1, 1)
-        self.pine.write_int8(0xA407E2, 1)
-        self.pine.write_int8(0xA407E3, 1)
-        self.pine.write_int8(0xA407E4, 1)
+        # Ryu Books have been changed to items
+        # # Give Ryu Books
+        # self.pine.write_int8(0xA407DD, 1)
+        # self.pine.write_int8(0xA407DE, 1)
+        # self.pine.write_int8(0xA407DF, 1)
+        # self.pine.write_int8(0xA407E0, 1)
+        # self.pine.write_int8(0xA407E1, 1)
+        # self.pine.write_int8(0xA407E2, 1)
+        # self.pine.write_int8(0xA407E3, 1)
+        # self.pine.write_int8(0xA407E4, 1)
 
         # Add starting lists
         self.pine.write_int8(0xA44CC6, 0x0e)
@@ -182,6 +184,11 @@ class DotHackInterface:
         def stat_check(stat: PlayStats):
             addr = self.addresses.PlayStats[stat.name]
             try:
+                book = RyuBooks.get_by_stat(stat)
+                if book and book not in ctx.obtained_ryu_books:
+                    self.pine.write_int16(addr, 0)
+                    return
+
                 val: int = self.pine.read_int16(addr)
                 name: str = PlayStatNames[stat.name].value
                 if stat.value["scale"] == "list":
@@ -289,7 +296,7 @@ class DotHackInterface:
                     self.add_consumable(item)
                 elif isinstance(item, VirusCoreItem):
                     """Add item to inventory"""
-                    self.add_key(self.addresses.Items[item.item.name])
+                    self.add_key(self.addresses.Items[item.virus_core.name])
                 elif isinstance(item, WordListItem):
                     """Add to list of word lists to unlock"""
                     ctx.unlocked_word_lists.add(item.wordlist.value["address"])
@@ -299,6 +306,10 @@ class DotHackInterface:
                 elif isinstance(item, ServerItem):
                     """Add to list of allowed servers"""
                     ctx.unlocked_servers.add(item.server)
+                elif isinstance(item, RyuBookItem):
+                    """Add to list of Ryu Books"""
+                    ctx.obtained_ryu_books.add(item.ryu_book)
+                    self.add_key(self.addresses.Items[item.ryu_book.name])
             else:
                 self.logger.warning(f"Unknown item ID {server_item.item} received at slot {ctx.next_item_slot}")
 
@@ -335,7 +346,7 @@ class DotHackInterface:
 
     def add_consumable(self, item_obj: ConsumableItem) -> None:
         addr: int = self.addresses.Storage
-        item: int = item_obj.item.value["id"]
+        item: int = item_obj.consumable.value["id"]
         for i in range(addr, addr + 396, 4):
             curr: int = self.pine.read_int32(i)
             amt: int = self.pine.read_int8(i+3)

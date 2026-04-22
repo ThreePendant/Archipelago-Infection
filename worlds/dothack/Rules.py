@@ -1,6 +1,7 @@
 from worlds.generic.Rules import add_rule
-from .data.Strings import EventNames as Ev, PlayStatNames, ServerNames, CharacterNames
+from .data.Strings import EventNames as Ev, PlayStatNames, ServerNames, CharacterNames, ItemNames
 from .data.locations.WordList import InfectionDeltaWordList as DeltaWordList, InfectionThetaWordList as ThetaWordList, get_wordlist_name
+from .data.items.RyuBooks import RyuBooks
 
 
 def set_list_rules(world, event_location, wordlist):
@@ -15,11 +16,17 @@ def set_list_rules(world, event_location, wordlist):
 
 
 def set_stats_rules(world, stats):
-    for i in range(len(stats)-1):
-        if stats[i].name.split('-')[0] != stats[i+1].name.split('-')[0]:
-            continue
-        add_rule(world.multiworld.get_location(stats[i+1].name, world.player),
-                 lambda state, i=i: state.can_reach_location(stats[i].name, world.player))
+    for i in range(len(stats)):
+        book = RyuBooks.get_by_stat(stats[i].stat)
+        if book:
+            add_rule(world.multiworld.get_location(stats[i].name, world.player),
+                     lambda state, book_item=ItemNames[book.name].value: state.has(book_item, world.player))
+
+        if i < len(stats) - 1:
+            if stats[i].name.split('-')[0] != stats[i+1].name.split('-')[0]:
+                continue
+            add_rule(world.multiworld.get_location(stats[i+1].name, world.player),
+                     lambda state, i=i: state.can_reach_location(stats[i].name, world.player))
 
 
 def infection_rules(world):

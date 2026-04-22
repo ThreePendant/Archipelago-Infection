@@ -16,6 +16,7 @@ from .data import Locations, Items
 from .data.items.PartyMembers import PartyMembers
 from .data.items.Servers import Servers
 from .data.items.AreaWords import AreaWords
+from .data.items.RyuBooks import RyuBooks
 
 gui_loaded_from_utils: bool = False
 try:
@@ -106,6 +107,7 @@ class InfectionContext(SuperContext):
     unlocked_party_members: Set[PartyMembers] = {PartyMembers.BlackRose}
     unlocked_servers: Set[Servers] = {Servers.Delta}
     unlocked_words: Set[AreaWords] = set()
+    obtained_ryu_books: Set[RyuBooks] = set()
 
     are_item_status_synced: bool = False
     game_goaled: bool = False
