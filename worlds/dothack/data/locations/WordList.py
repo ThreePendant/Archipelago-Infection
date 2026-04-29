@@ -30,7 +30,7 @@ class InfectionDeltaWordList(WordListBase):
     HiddenForbiddenHolyGround = {"address": 0x0f, "words": [
         AreaWords.Hidden, AreaWords.Forbidden, AreaWords.HolyGround
     ],
-        "classifications": {1: ItemClassification.progression},
+        "classifications": {1: ItemClassification.useful},
         "volumes": [1]
     }
     HideousSomeonesGiant = {"address": 0x10, "words": [

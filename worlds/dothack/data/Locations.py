@@ -79,9 +79,13 @@ def area_word_gen(enum) -> list[InfectionAreaWordLocation]:
 
 
 def wordlist_gen(enum, volume: int) -> list[InfectionWordListLocation]:
+    excluded_lists: list[WordListBase] = [
+        DeltaWordList.BurstingPassedOverAquaField,
+        DeltaWordList.HiddenForbiddenHolyGround
+    ]
     res = []
     for wordlist in enum:
-        if volume in wordlist.value.get("volumes", []):
+        if volume in wordlist.value.get("volumes", []) and wordlist not in excluded_lists:
             res.append(InfectionWordListLocation(
                 wordlist
             ))

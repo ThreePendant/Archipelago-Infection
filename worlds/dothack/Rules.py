@@ -104,6 +104,7 @@ def infection_rules(world):
              lambda state: state.can_reach_location(Ev.ElkMiaFavorite.value, world.player))
 
     set_list_rules(world, Ev.MistralMeetUp.value, ThetaWordList.CollapsedMomentarySpiral)
+    set_list_rules(world, Ev.MistralMeetUp.value, DeltaWordList.BurstingPassedOverAquaField)
     add_rule(world.multiworld.get_location(get_wordlist_name(ThetaWordList.CollapsedMomentarySpiral), world.player),
              lambda state: state.can_reach_location(Ev.PirosDiary.value, world.player))
     add_rule(world.multiworld.get_location(Ev.MistralMeetUp.value, world.player),

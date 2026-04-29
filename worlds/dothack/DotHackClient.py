@@ -102,10 +102,10 @@ class InfectionContext(SuperContext):
     items_name_to_id: dict[str, int] = Items.generate_name_to_id()
 
     # Session Properties
-    unlocked_word_lists: Set[int] = {0x0e, 0x0f}
+    unlocked_word_lists: Set[int] = set()
     obtained_word_lists: Set[int] = set()
-    unlocked_party_members: Set[PartyMembers] = {PartyMembers.BlackRose}
-    unlocked_servers: Set[Servers] = {Servers.Delta}
+    unlocked_party_members: Set[PartyMembers] = set()
+    unlocked_servers: Set[Servers] = set()
     unlocked_words: Set[AreaWords] = set()
     obtained_ryu_books: Set[RyuBooks] = set()
 

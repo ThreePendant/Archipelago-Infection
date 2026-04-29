@@ -10,7 +10,7 @@ class PartyMembers(Enum):
                 return member
         return None
     Mia = {"id": 1, "classifications": {1: ItemClassification.progression}, "volumes": [1]}
-    Orca = {"id": 2, "classifications": {1: ItemClassification.progression}, "volumes": [1]}
+    Orca = {"id": 2, "classifications": {1: ItemClassification.useful}, "volumes": [1]}
     Marlo = {"id": 3, "classifications": {1: ItemClassification.useful}, "volumes": [1]}
     Sanjuro = {"id": 4, "classifications": {1: ItemClassification.useful}, "volumes": [1]}
     NukeUsagimaru = {"id": 5, "classifications": {1: ItemClassification.useful}, "volumes": [1]}

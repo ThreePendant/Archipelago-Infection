@@ -183,16 +183,16 @@ class DotHackWorld(World):
         items = []
         starting_items = [
             ServerNames.Delta.value,
-            AreaWordNames.Bursting.value,
-            AreaWordNames.AquaField.value,
-            AreaWordNames.PassedOver.value,
-            AreaWordNames.Hidden.value,
-            AreaWordNames.Forbidden.value,
-            AreaWordNames.HolyGround.value,
-            CharacterNames.BlackRose.value,
-            CharacterNames.Orca.value,
-            get_wordlist_name(DeltaWordList.HiddenForbiddenHolyGround),
-            get_wordlist_name(DeltaWordList.BurstingPassedOverAquaField),
+            # AreaWordNames.Bursting.value,
+            # AreaWordNames.AquaField.value,
+            # AreaWordNames.PassedOver.value,
+            # AreaWordNames.Hidden.value,
+            # AreaWordNames.Forbidden.value,
+            # AreaWordNames.HolyGround.value,
+            # CharacterNames.BlackRose.value,
+            # CharacterNames.Orca.value,
+            # get_wordlist_name(DeltaWordList.HiddenForbiddenHolyGround),
+            # get_wordlist_name(DeltaWordList.BurstingPassedOverAquaField),
         ]
         for item_name in starting_items:
             item = self.create_item(item_name)
