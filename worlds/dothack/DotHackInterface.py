@@ -336,6 +336,10 @@ class DotHackInterface:
         for wordlist in WordListItems:
             if wordlist.item_id in received_id:
                 ctx.unlocked_word_lists.add(wordlist.wordlist.value["address"])
+        for ryu_book in RyuBookItems:
+            if ryu_book.item_id in received_id:
+                ctx.obtained_ryu_books.add(ryu_book.ryu_book)
+                # self.add_key(self.addresses.Items[ryu_book.name])
         # for item in ConsumableItems:
         #     if item.item_id in received_id:
         #         self.add_consumable(item)
@@ -388,10 +392,8 @@ class DotHackInterface:
                 else:
                     new_val &= ~(1 << (m_id % 32))
 
-            if new_val != val:
-                self.pine.write_int32(addr, new_val)
-            if ctx.always_online_party_members:
-                self.pine.write_int32(addr + 4, new_val)
+            self.pine.write_int32(addr, new_val)
+            self.pine.write_int32(addr + 4, new_val)
         except (RuntimeError, ConnectionError):
             return
 
@@ -471,3 +473,16 @@ class DotHackInterface:
             curr = self.email_state(i)
             if curr == 2:
                 self.email_state(i, 4)
+
+    async def scan_ryu_books(self, ctx) -> None:
+        """
+        Scans the Ryu Book list and locks/unlocks based on whether the Ryu Book is in ctx.obtained_ryu_books
+        """
+        try:
+            for ryu_book in RyuBooks:
+                if ryu_book in ctx.obtained_ryu_books:
+                    self.pine.write_int8(self.addresses.Items[ryu_book.name], 1)
+                else:
+                    self.pine.write_int8(self.addresses.Items[ryu_book.name], 0)
+        except (RuntimeError, ConnectionError):
+            return None

@@ -14,14 +14,6 @@ class Volume(Choice):
     default = 1
 
 
-class AlwaysOnlinePartyMembers(Toggle):
-    """
-    Choose if party members should always be available.
-    Default: Disabled
-    """
-    display_name = "Always Online Party Members"
-
-
 class CompletionCondition(Choice):
     """
     Choose the completion condition for the game.
@@ -146,7 +138,6 @@ infection_option_groups: dict[str, list] = {
         CompletionCondition,
     ],
     "Quality of Life Options": [
-        AlwaysOnlinePartyMembers,
         AutomaticallyReadEmails,
     ],
     "Ryu Book Options": [
@@ -168,7 +159,6 @@ infection_option_groups: dict[str, list] = {
 
 @dataclass
 class DotHackOptions(PerGameCommonOptions):
-    always_online_party_members: AlwaysOnlinePartyMembers
     automatically_read_emails: AutomaticallyReadEmails
     completion_condition: CompletionCondition
     opened_portals: OpenedPortals
@@ -193,7 +183,6 @@ def create_option_groups() -> list[OptionGroup]:
 
 def slot_data_options() -> list[str]:
     return [
-        APHelper.always_online_party_members.value,
         APHelper.automatically_read_emails.value,
         APHelper.completion_condition.value,
         APHelper.opened_portals.value,

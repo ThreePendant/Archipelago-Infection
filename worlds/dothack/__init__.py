@@ -67,7 +67,6 @@ class InfectionSettings(settings.Group):
         def __getitem__(self, index):
             return self[index]
 
-    always_online_party_members: GamePreferences | bool = False
     automatically_read_emails: GamePreferences | bool = False
     completion_condition: GenerationPreferences | int = 0
     opened_portals: GenerationPreferences | int = 100
@@ -226,8 +225,6 @@ class DotHackWorld(World):
         is_in_ut: bool = re_gen_passthrough and self.game in re_gen_passthrough
         if is_in_ut:
             slot_data = re_gen_passthrough[self.game]
-            self.options.always_online_party_members.value = slot_data.get(
-                APHelper.always_online_party_members.value, [])
             self.options.automatically_read_emails.value = slot_data.get(APHelper.automatically_read_emails.value, [])
             stats = {}
             stats[PlayStatNames.AreasVisited.name] = self.options.areas_visited.value

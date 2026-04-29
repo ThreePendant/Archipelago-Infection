@@ -118,7 +118,6 @@ class InfectionContext(SuperContext):
     # Player Set Settings
     volume: int = 1
     settings: InfectionSettings
-    always_online_party_members: bool = False
     automatically_read_emails: bool = False
     completion_condition: int = 0
     opened_portals: int = 100
@@ -136,7 +135,6 @@ class InfectionContext(SuperContext):
         Utils.init_logging(APConsole.Info.client_name_clean.value + self.client_version)
         self.settings = get_settings().get("dothack_options", {})
 
-        self.always_online_party_members = self.settings.get("always_online_party_members", False)
         self.automatically_read_emails = self.settings.get("automatically_read_emails", False)
         self.completion_condition = self.settings.get("completion_condition", 0)
         self.opened_portals = self.settings.get("opened_portals", 100)
@@ -163,9 +161,6 @@ class InfectionContext(SuperContext):
         super().on_package(cmd, args)
         if cmd == APHelper.cmd_conn.value:
             data = args[APHelper.arg_sl_dt.value]
-
-            self.always_online_party_members = data.get(
-                APHelper.always_online_party_members.value, self.always_online_party_members)
             self.automatically_read_emails = data.get(
                 APHelper.automatically_read_emails.value, self.automatically_read_emails)
             self.completion_condition = data.get(APHelper.completion_condition.value, self.completion_condition)
@@ -292,6 +287,7 @@ async def check_game(ctx: InfectionContext):
         await ctx.ipc.scan_party_member(ctx)
         await ctx.ipc.scan_server(ctx)
         await ctx.ipc.scan_word_list(ctx)
+        await ctx.ipc.scan_ryu_books(ctx)
 
         if ctx.automatically_read_emails:
             await ctx.ipc.scan_emails()

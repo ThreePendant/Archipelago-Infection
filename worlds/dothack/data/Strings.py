@@ -47,7 +47,6 @@ class APHelper(Enum):
     volume = "volume"
 
     # AP Options
-    always_online_party_members = "always_online_party_members"
     include_side_quests = "include_side_quests"
     automatically_read_emails = "automatically_read_emails"
     completion_condition = "completion_condition"
