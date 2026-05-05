@@ -17,6 +17,17 @@ from data.GameState import InfectionGameState as GameState
 # from worlds.AutoWorld import World, WebWorld
 # from worlds.LauncherComponents import Component, components, launch_subprocess, Type
 
+# Grunty info:
+# RA documented values (starting at 0xa46e44) don't actually unlock them
+# These values unlock them:
+# Delta: N/A
+# Theta: A41B8A (Noble), A41B8C (Iron), A41B8E (Poison)
+# Lambda: A41BA2 (Noble), A41BA4 (Bony), A41BA6 (Snakey)
+# Sigma: A41BBA (Noble), A41BBC (Aqua), A41BBE (Milky)
+# Omega: A41BD2 (Noble), A41BD4 (Rocker), A41BD6 (Wooden)
+# Worth pointing out that the game does seem to check whether you've actually
+# unlocked the grunty when legitimately obtaining one.
+
 
 class PartyMemberBase(Enum):
     @classmethod
