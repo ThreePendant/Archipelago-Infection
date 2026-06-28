@@ -290,6 +290,7 @@ async def check_game(ctx: InfectionContext):
         await ctx.ipc.scan_server(ctx)
         await ctx.ipc.scan_word_list(ctx)
         await ctx.ipc.scan_ryu_books(ctx)
+        await ctx.ipc.scan_kite_class(ctx)
 
         if ctx.automatically_read_emails:
             await ctx.ipc.scan_emails()

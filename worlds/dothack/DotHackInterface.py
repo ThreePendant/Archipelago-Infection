@@ -496,3 +496,11 @@ class DotHackInterface:
                     self.pine.write_int8(self.addresses.Items[ryu_book.name], 0)
         except (RuntimeError, ConnectionError):
             return None
+
+    async def scan_kite_class(self, ctx) -> None:
+        try:
+            current_class: int = self.pine.read_int8(self.addresses.KiteClass)
+            if current_class != ctx.kite_class:
+                self.pine.write_int8(self.addresses.KiteClass, ctx.kite_class)
+        except (RuntimeError, ConnectionError):
+            return None

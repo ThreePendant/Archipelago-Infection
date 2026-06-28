@@ -17,6 +17,7 @@ class VolumeAddresses(ABC):
     IngameStatus: int
     IngameOverlay: int
     LastItemIdx: int
+    KiteClass: int
 
 
 class InfectionAddresses(VolumeAddresses):
@@ -29,6 +30,7 @@ class InfectionAddresses(VolumeAddresses):
     IngameStatus = 0xa3f5f0
     IngameOverlay = 0x00400804
     LastItemIdx = 0xa44ec8
+    KiteClass = 0xa46f30
 
     Items = {
         ItemNames.VirusCoreA.name: 0xa406cc,
