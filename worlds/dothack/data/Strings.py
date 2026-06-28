@@ -60,6 +60,7 @@ class APHelper(Enum):
     symbols_activated = "symbols_activated"
     data_drains = "data_drains"
     kite_levels = "kite_levels"
+    kite_class = "KiteClass"
 
     # Item Groups
     area_words = "Area Words"
