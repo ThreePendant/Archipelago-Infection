@@ -14,6 +14,21 @@ class Volume(Choice):
     default = 1
 
 
+class KiteClass(Choice):
+    """
+        Choose the main character's class.
+        Default: Twin Blade
+        """
+    display_name = "Kite's Class"
+    option_twin_blade = 0
+    option_blademaster = 1
+    option_heavy_blade = 2
+    option_heavy_axeman = 3
+    option_long_arm = 4
+    option_wavemaster = 5
+    default = 0
+
+
 class CompletionCondition(Choice):
     """
     Choose the completion condition for the game.
@@ -135,6 +150,7 @@ class KiteLevels(Range):
 infection_option_groups: dict[str, list] = {
     "Quest Options": [
         Volume,
+        KiteClass,
         CompletionCondition,
     ],
     "Quality of Life Options": [
@@ -172,6 +188,7 @@ class DotHackOptions(PerGameCommonOptions):
     kite_levels: KiteLevels
     death_link: DeathLink
     volume: Volume
+    kite_class: KiteClass
 
 
 def create_option_groups() -> list[OptionGroup]:
@@ -196,4 +213,5 @@ def slot_data_options() -> list[str]:
         APHelper.kite_levels.value,
         APHelper.death_link.value,
         APHelper.volume.value,
+        APHelper.kite_class.value,
     ]

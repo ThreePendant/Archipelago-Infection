@@ -1,31 +1,33 @@
 
-from worlds.dothack.data.locations.Events import CompletionConditions
-from worlds.dothack.data.locations.PlayStats import PlayStats
-from worlds.dothack import PlayStatNames
 import math
-import asyncio
 from enum import IntEnum
 from logging import Logger
 from typing import Optional, List, Set
 
 from NetUtils import NetworkItem
-from .pcsx2_interface.pine import Pine
-from .data.Strings import APConsole, Meta, GameStateNames, EventNames
+from worlds.dothack import PlayStatNames
+from worlds.dothack.data.locations.Events import CompletionConditions
+from worlds.dothack.data.locations.PlayStats import PlayStats
+from .data import Items
+from .data.Addresses import VolumeAddresses, InfectionAddresses, MutationAddresses, OutbreakAddresses, \
+    QuarantineAddresses
 from .data.GameState import InfectionGameState as GameState
-from .data.locations.WordList import InfectionDeltaWordList as DeltaWordList, InfectionThetaWordList as ThetaWordList, WordListBase, get_wordlist_name
-from .data.locations.Events import InfectionStoryEvents as StoryEvents, InfectionGoldenGoblins as GoldenGoblins, InfectionOptionalPartyMembers as OptionalPartyMembers
-
+from .data.Items import InfectionWordListItem as WordListItem, PartyMemberItem, ServerItem, ConsumableItem, \
+    VirusCoreItem, RyuBookItem
+from .data.Items import PartyMemberItems
+from .data.Items import ServerItems
+from .data.Items import WordListItems, RyuBookItems
+from .data.Strings import APConsole, Meta, GameStateNames, EventNames
 from .data.items.AreaWords import AreaWords
-from .data.items.Servers import Servers
 from .data.items.PartyMembers import PartyMembers
 from .data.items.RyuBooks import RyuBooks
+from .data.items.Servers import Servers
+from .data.locations.Events import InfectionStoryEvents as StoryEvents, InfectionGoldenGoblins as GoldenGoblins, \
+    InfectionOptionalPartyMembers as OptionalPartyMembers
+from .data.locations.WordList import InfectionDeltaWordList as DeltaWordList, InfectionThetaWordList as ThetaWordList, \
+    WordListBase, get_wordlist_name
+from .pcsx2_interface.pine import Pine
 
-from .data import Items
-from .data.Items import InfectionWordListItem as WordListItem, PartyMemberItem, ServerItem, ConsumableItem, VirusCoreItem, RyuBookItem
-from .data.Items import WordListItems, ConsumableItems, VirusCoreItems, RyuBookItems
-from .data.Items import ServerItems
-from .data.Items import PartyMemberItems
-from .data.Addresses import VolumeAddresses, InfectionAddresses, MutationAddresses, OutbreakAddresses, QuarantineAddresses
 # Notes:
 # latest item idx can seemingly be written to 0xA44EC8 safely.
 # game doesn't seem to use it for anything.
@@ -117,7 +119,7 @@ class DotHackInterface:
     def set_last_item_index(self, index: int) -> None:
         self.pine.write_int32(self.addresses.LastItemIdx, index)
 
-    def infection_initial_state(self) -> None:
+    def infection_initial_state(self, ctx) -> None:
         self.pine.write_int8(0xa44ed7, self.pine.read_int8(0xa44ed7) |
                              0b00000111)  # Not needed when setting emails read
 
@@ -161,6 +163,14 @@ class DotHackInterface:
 
         # Get Mia and Elk out of your way
         self.pine.write_int8(0xa44f58, self.pine.read_int8(0xa44f58) | 0xff)
+
+        # Kite's Class from Options
+        if ctx.kite_class == 0: self.pine.write_int8(0xA46F30, 0)
+        if ctx.kite_class == 1: self.pine.write_int8(0xA46F30, 1)
+        if ctx.kite_class == 2: self.pine.write_int8(0xA46F30, 2)
+        if ctx.kite_class == 3: self.pine.write_int8(0xA46F30, 3)
+        if ctx.kite_class == 4: self.pine.write_int8(0xA46F30, 4)
+        if ctx.kite_class == 5: self.pine.write_int8(0xA46F30, 5)
 
     async def check_locations(self, ctx) -> None:
         checked: Set[int] = set()
@@ -484,5 +494,13 @@ class DotHackInterface:
                     self.pine.write_int8(self.addresses.Items[ryu_book.name], 1)
                 else:
                     self.pine.write_int8(self.addresses.Items[ryu_book.name], 0)
+        except (RuntimeError, ConnectionError):
+            return None
+
+    async def scan_kite_class(self, ctx) -> None:
+        try:
+            current_class: int = self.pine.read_int8(self.addresses.KiteClass)
+            if current_class != ctx.kite_class:
+                self.pine.write_int8(self.addresses.KiteClass, ctx.kite_class)
         except (RuntimeError, ConnectionError):
             return None
