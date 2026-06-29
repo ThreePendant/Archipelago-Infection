@@ -127,7 +127,7 @@ class DotHackWorld(World):
         super(DotHackWorld, self).__init__(multiworld, player)
 
     def generate_early(self):
-        ut_initialized: bool = self.prepare_ut()
+        ut_initialized: bool = self.prepare_ut
         if ut_initialized:
             return
         stats = {}
@@ -220,6 +220,7 @@ class DotHackWorld(World):
                 from .Rules import infection_rules as set_rules
         set_rules(self)
 
+    @property
     def prepare_ut(self):
         re_gen_passthrough = getattr(self.multiworld, "re_gen_passthrough", {})
         is_in_ut: bool = re_gen_passthrough and self.game in re_gen_passthrough
@@ -227,6 +228,7 @@ class DotHackWorld(World):
             slot_data = re_gen_passthrough[self.game]
             self.options.automatically_read_emails.value = slot_data.get(APHelper.automatically_read_emails.value, [])
             stats = {}
+            self.options.kite_class.value = slot_data.get(APHelper.kite_class.value, [])
             stats[PlayStatNames.AreasVisited.name] = self.options.areas_visited.value
             stats[PlayStatNames.ChestsOpened.name] = self.options.chests.value
             stats[PlayStatNames.BreakablesBroken.name] = self.options.breakables.value
