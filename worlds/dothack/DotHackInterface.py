@@ -13,7 +13,7 @@ from .data.Addresses import VolumeAddresses, InfectionAddresses, MutationAddress
     QuarantineAddresses
 from .data.GameState import InfectionGameState as GameState
 from .data.Items import InfectionWordListItem as WordListItem, PartyMemberItem, ServerItem, ConsumableItem, \
-    VirusCoreItem, RyuBookItem
+    VirusCoreItem, RyuBookItem, GruntyFoodItem
 from .data.Items import PartyMemberItems
 from .data.Items import ServerItems
 from .data.Items import WordListItems, RyuBookItems
@@ -313,6 +313,9 @@ class DotHackInterface:
                 elif isinstance(item, VirusCoreItem):
                     """Add item to inventory"""
                     self.add_key(self.addresses.Items[item.virus_core.name])
+                elif isinstance(item, GruntyFoodItem):
+                    """Add item to inventory"""
+                    self.add_key(self.addresses.Items[item.grunty_food.name])
                 elif isinstance(item, WordListItem):
                     """Add to list of word lists to unlock"""
                     ctx.unlocked_word_lists.add(item.wordlist.value["address"])
