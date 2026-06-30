@@ -6,7 +6,7 @@ from .Strings import APHelper, Meta, CharacterNames, ServerNames, ItemNames
 from .items.PartyMembers import PartyMembers
 from .items.Servers import Servers
 from .locations.WordList import WordListBase, InfectionDeltaWordList, InfectionThetaWordList, get_wordlist_name
-from .items.FillerItems import Consumables, VirusCores, GruntyFood
+from .items.FillerItems import Consumables, VirusCores, GruntyFood, InfectionLevel
 from .items.RyuBooks import RyuBooks
 from .DataManager import VOLUME_DATA
 
@@ -148,11 +148,28 @@ class RyuBookItem(InfectionItemMeta):
             classification=self.classification
         )
 
+class InfectionLevelItem(InfectionItemMeta):
+        infection_level: InfectionLevel
 
+        def __init__(self, name, item, address):
+            self.name = name
+            self.item_id = (address * 16)
+            self.classification = ItemClassification.filler
+            self.infection_level = item
+
+        def to_item(self, player: int) -> InfectionItem:
+            return InfectionItem(
+                name=self.name,
+                code=self.item_id,
+                player=player,
+                classification=self.classification
+
+            )
 ConsumableItems: list[ConsumableItem] = []
 VirusCoreItems: list[VirusCoreItem] = []
 RyuBookItems: list[RyuBookItem] = []
 GruntyFoodItems: list[GruntyFoodItem] = []
+InfectionLevelItems: list[InfectionLevelItem] = []
 
 for consumable in Consumables:
     ConsumableItems.append(ConsumableItem(
@@ -178,8 +195,12 @@ for ryu_book in RyuBooks:
         item=ryu_book,
         address=Addresses.Items[ryu_book.name]
     ))
-
-
+for infection_level in InfectionLevel:
+    InfectionLevelItems.append(InfectionLevelItem(
+        name=ItemNames[infection_level.name].value,
+        item=infection_level,
+        address=Addresses.Items[infection_level.name]
+    ))
 def generate_volume_items(volume: int):
     v_data = VOLUME_DATA[volume]
     v_data.wordlist_items = []
@@ -233,7 +254,8 @@ def generate_volume_items(volume: int):
         *ConsumableItems,
         *VirusCoreItems,
         *GruntyFoodItems,
-        *RyuBookItems
+        *RyuBookItems,
+        *InfectionLevelItems
     ]
 
 
@@ -267,7 +289,8 @@ ITEMS_MASTER: list[ItemUnion] = [
     *ConsumableItems,
     *VirusCoreItems,
     *GruntyFoodItems,
-    *RyuBookItems
+    *RyuBookItems,
+    *InfectionLevelItems
 ]
 
 ITEMS_INDEX: list[Sequence[ItemUnion]] = [
@@ -278,7 +301,8 @@ ITEMS_INDEX: list[Sequence[ItemUnion]] = [
     ConsumableItems,
     VirusCoreItems,
     GruntyFoodItems,
-    RyuBookItems
+    RyuBookItems,
+    InfectionLevelItems
 ]
 
 

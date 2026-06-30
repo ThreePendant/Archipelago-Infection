@@ -227,7 +227,7 @@ class ItemNames(Enum):
     BearCatEgg = "Bear Cat Egg"
     InvisibleEgg = "Invisible Egg"
     BloodyEgg = "Bloody Egg"
-
+    InfectionLevel = "Infection Level 0%"
 
 class AreaWordNames(Enum):
     _value_: str
