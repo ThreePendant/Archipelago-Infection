@@ -15,7 +15,7 @@ from .Addresses import InfectionAddresses as Addresses
 
 
 class InfectionItem(Item):
-    game: str = Meta.game
+    game: str = str(Meta.game.value)
 
 
 class InfectionItemMeta(ABC):
@@ -165,7 +165,8 @@ def generate_volume_items(volume: int):
     v_data.server_items = []
 
     for wordlist in InfectionDeltaWordList:
-        if volume in wordlist.value.get("volumes", []):
+        volumes = wordlist.value.get("volumes", [])
+        if isinstance(volumes, list) and volume in volumes:
             v_data.wordlist_items.append(InfectionWordListItem(
                 name=get_wordlist_name(wordlist),
                 wordlist=wordlist,
@@ -173,7 +174,8 @@ def generate_volume_items(volume: int):
             ))
 
     for wordlist in InfectionThetaWordList:
-        if volume in wordlist.value.get("volumes", []):
+        volumes = wordlist.value.get("volumes", [])
+        if isinstance(volumes, list) and volume in volumes:
             v_data.wordlist_items.append(InfectionWordListItem(
                 name=get_wordlist_name(wordlist),
                 wordlist=wordlist,
@@ -181,7 +183,8 @@ def generate_volume_items(volume: int):
             ))
 
     for member in PartyMembers:
-        if volume in member.value.get("volumes", []):
+        volumes = member.value.get("volumes", [])
+        if isinstance(volumes, list) and volume in volumes:
             v_data.party_member_items.append(PartyMemberItem(
                 party_member=member,
                 name=CharacterNames[member.name].value,
@@ -191,7 +194,8 @@ def generate_volume_items(volume: int):
             ))
 
     for server in Servers:
-        if volume in server.value.get("volumes", []):
+        volumes = server.value.get("volumes", [])
+        if isinstance(volumes, list) and volume in volumes:
             v_data.server_items.append(ServerItem(
                 server=server,
                 name=ServerNames[server.name].value,
@@ -231,7 +235,9 @@ for v_data in VOLUME_DATA.values():
         if item not in ServerItems:
             ServerItems.append(item)
 
-ITEMS_MASTER: Sequence[Sequence] = [
+ItemUnion = ConsumableItem | InfectionWordListItem | PartyMemberItem | RyuBookItem | ServerItem | VirusCoreItem
+
+ITEMS_MASTER: list[ItemUnion] = [
     *PartyMemberItems,
     *ServerItems,
     *WordListItems,
@@ -240,7 +246,7 @@ ITEMS_MASTER: Sequence[Sequence] = [
     *RyuBookItems
 ]
 
-ITEMS_INDEX: Sequence[Sequence] = [
+ITEMS_INDEX: list[Sequence[ItemUnion]] = [
     ITEMS_MASTER,
     PartyMemberItems,
     ServerItems,
@@ -254,11 +260,11 @@ ITEMS_INDEX: Sequence[Sequence] = [
 def from_id(item_id=int, category: int = 0):
     ref: Sequence = ITEMS_INDEX[category]
 
-    i: InfectionItemMeta = next((i for i in ref if i.item_id == item_id), None)
+    i: InfectionItemMeta | None = next((i for i in ref if i.item_id == item_id), None)
     return i
 
 
-def generate_name_to_id() -> dict[str: int]:
+def generate_name_to_id() -> dict[str, int]:
     i: InfectionItemMeta
     return {i.name: i.item_id for i in ITEMS_MASTER}
 

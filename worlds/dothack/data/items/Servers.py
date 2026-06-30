@@ -1,8 +1,17 @@
 from enum import Enum
+from typing import TypedDict
 from BaseClasses import ItemClassification
 
 
+class ServerAttributes(TypedDict):
+    id: int
+    classifications: dict[int, ItemClassification]
+    volumes: list[int]
+
+
 class Servers(Enum):
+    _value_: ServerAttributes
+
     @classmethod
     def from_id(self, id: int):
         for member in self:

@@ -39,7 +39,7 @@ except ImportError:
         from CommonClient import gui_enabled
 
 
-class InfectionCommandProcessor(ClientCommandProcessor):
+class InfectionCommandProcessor(ClientCommandProcessor):  # pyrefly: ignore
     def __init__(self, ctx: SuperContext):
         super().__init__(ctx)
 
@@ -71,14 +71,14 @@ class InfectionCommandProcessor(ClientCommandProcessor):
                     logger.info(f"Playing .hack//INFECTION")
 
 
-class InfectionContext(SuperContext):
+class InfectionContext(SuperContext):  # pyrefly: ignore
     # Archipelago Meta
     client_version: str = APConsole.Info.client_ver.value
     world_version: str = APConsole.Info.world_ver.value
 
     # Game Details
-    game: str = Meta.game.value
-    platform: str = Meta.platform.value
+    game: str = str(Meta.game.value)
+    platform: str = str(Meta.platform.value)
     items_handling: int = 0b111
 
     # Client Properties
@@ -86,10 +86,10 @@ class InfectionContext(SuperContext):
     tags: set[str] = {"AP"}
 
     # Interface Properties
-    ipc: DotHackInterface = DotHackInterface
+    ipc: DotHackInterface
     is_game_connected: bool = bool(ConnectionStatus.DISCONNECTED.value)
     has_just_connected: bool = False
-    interface_sync_task: asyncio.tasks = None
+    interface_sync_task = None
     last_message: Optional[str] = None
 
     pending_resync: bool = True
@@ -223,7 +223,7 @@ class InfectionContext(SuperContext):
 
 
 def update_connection_status(ctx: InfectionContext, status: bool):
-    if bool(ctx.is_game_connected) == status:
+    if ctx.is_game_connected == status:
         return
 
     if status:

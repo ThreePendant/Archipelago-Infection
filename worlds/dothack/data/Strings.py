@@ -75,7 +75,7 @@ class APHelper(Enum):
 
 
 class Meta(Enum):
-    _value_: str
+    _value_: str | list[str]
     game = ".hack//IMOQ"
     platform = "PS2"
     supported_versions = ["SLUS-20267"]

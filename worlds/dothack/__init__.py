@@ -1,5 +1,5 @@
 from BaseClasses import LocationProgressType, ItemClassification
-from typing import ClassVar, List
+from typing import ClassVar, List, cast
 import logging
 import settings
 
@@ -101,8 +101,8 @@ class DotHackWorld(World):
     video animation (OVA) series which details fictional events that occur concurrently with the games.
     """
     # Define basic game parameters
-    game = Meta.game.value
-    settings: InfectionSettings
+    game = str(Meta.game.value)
+    settings: ClassVar[InfectionSettings]
     web: ClassVar[WebWorld] = InfectionWeb()
     topology_present = True
 
@@ -114,8 +114,8 @@ class DotHackWorld(World):
     item_name_to_id = Items.generate_name_to_id()
     event_location_name_to_id: dict[str, int] = Locations.generate_event_name_to_id()
     playstat_location_name_to_id: dict[str, int] = Locations.generate_playstat_name_to_id()
-    location_name_to_id: dict[str, int] = {**event_location_name_to_id, **playstat_location_name_to_id}
-    playstat_locations: List[Location] = []
+    location_name_to_id: ClassVar[dict[str, int]] = {**event_location_name_to_id, **playstat_location_name_to_id}
+    playstat_locations: list = []
     item_name_groups = Items.generate_item_groups()
     location_name_groups = Locations.generate_location_groups()
 
@@ -142,8 +142,6 @@ class DotHackWorld(World):
         stats[PlayStatNames.AllFieldPortalsOpened.name] = self.options.cleared_portals.value
         stats[PlayStatNames.PortalsOpened.name] = self.options.opened_portals.value
         self.playstat_locations = Locations.playstat_gen(stats)
-        self.playstat_location_name_to_id = Locations.generate_playstat_name_to_id(self.playstat_locations)
-        self.location_name_to_id = {**self.event_location_name_to_id, **self.playstat_location_name_to_id}
 
     def create_regions(self):
         main_region = Region("Menu", self.player, self.multiworld)
@@ -173,7 +171,7 @@ class DotHackWorld(World):
             if isinstance(itm, InfectionItemMeta):
                 if itm.name == item:
                     return itm.to_item(self.player)
-        return None
+        raise ValueError(f"Could not create item '{item}'")
 
     def get_filler_item_name(self) -> str:
         return self.random.choice(self.filler_items).name
@@ -196,8 +194,7 @@ class DotHackWorld(World):
         ]
         for item_name in starting_items:
             item = self.create_item(item_name)
-            if item:
-                self.multiworld.push_precollected(item)
+            self.multiworld.push_precollected(item)
 
         v_data = VOLUME_DATA[self.options.volume.value]
 
@@ -211,7 +208,7 @@ class DotHackWorld(World):
         self.item_pool.extend(items)
 
         needed_filler = len(self.multiworld.get_unfilled_locations(self.player)) - len(self.item_pool)
-        self.item_pool.extend(self.create_filler() for _ in range(needed_filler))
+        self.item_pool.extend(cast(list[InfectionItem], [self.create_filler() for _ in range(needed_filler)]))
         self.multiworld.itempool += self.item_pool
 
     def set_rules(self):
@@ -222,7 +219,7 @@ class DotHackWorld(World):
 
     def prepare_ut(self):
         re_gen_passthrough = getattr(self.multiworld, "re_gen_passthrough", {})
-        is_in_ut: bool = re_gen_passthrough and self.game in re_gen_passthrough
+        is_in_ut: bool = bool(re_gen_passthrough and self.game in re_gen_passthrough)
         if is_in_ut:
             slot_data = re_gen_passthrough[self.game]
             self.options.automatically_read_emails.value = slot_data.get(APHelper.automatically_read_emails.value, [])
@@ -238,8 +235,6 @@ class DotHackWorld(World):
             stats[PlayStatNames.AllFieldPortalsOpened.name] = self.options.cleared_portals.value
             stats[PlayStatNames.PortalsOpened.name] = self.options.opened_portals.value
             self.playstat_locations = Locations.playstat_gen(stats)
-            self.playstat_location_name_to_id = Locations.generate_playstat_name_to_id(self.playstat_locations)
-            self.location_name_to_id = {**self.event_location_name_to_id, **self.playstat_location_name_to_id}
         return is_in_ut
 
     def fill_slot_data(self):
