@@ -42,11 +42,11 @@ class ConnectionStatus(IntEnum):
 
 class DotHackInterface:
     pine: Pine = Pine()
-    status: ConnectionStatus = ConnectionStatus.DISCONNECTED.value
+    status: ConnectionStatus = ConnectionStatus.DISCONNECTED
     logger: Logger
     loaded_game: Optional[str] = None
     volume: int
-    addresses: VolumeAddresses = None
+    addresses: type[VolumeAddresses]
 
     def __init__(self, logger: Logger, volume: int):
         self.logger = logger
@@ -61,7 +61,7 @@ class DotHackInterface:
         if not self.pine.is_connected():
             self.pine.connect()
             if not self.pine.is_connected():
-                self.status = ConnectionStatus.DISCONNECTED.value
+                self.status = ConnectionStatus.DISCONNECTED
                 return
             self.logger.info(APConsole.Info.init.value)
         try:
@@ -71,22 +71,22 @@ class DotHackInterface:
             self.loaded_game = None
             if game_id in Meta.supported_versions.value:
                 self.loaded_game = game_id
-                self.status = ConnectionStatus.IN_GAME.value
+                self.status = ConnectionStatus.IN_GAME
             elif not self.status is ConnectionStatus.WRONG_GAME.value:
                 self.logger.warning(APConsole.Err.game_wrong.value)
-                self.status = ConnectionStatus.WRONG_GAME.value
+                self.status = ConnectionStatus.WRONG_GAME
         except RuntimeError:
             return
         except ConnectionError:
             return
 
         if self.status is ConnectionStatus.DISCONNECTED.value:
-            self.status = ConnectionStatus.CONNECTED.value
+            self.status = ConnectionStatus.CONNECTED
 
     def disconnect_game(self) -> None:
         self.pine.disconnect()
         self.loaded_game = None
-        self.status = ConnectionStatus.DISCONNECTED.value
+        self.status = ConnectionStatus.DISCONNECTED
 
     def get_connection_state(self) -> bool:
         try:
@@ -101,7 +101,7 @@ class DotHackInterface:
             overlay_val = self.pine.read_int8(self.addresses.IngameOverlay)
             if overlay_val == 0:
                 return None
-            status = GameStateNames[GameState(st_val).name]
+            status = GameStateNames[str(GameState(st_val).name)]
             if status in [GameStateNames.LoggedIn, GameStateNames.Login, GameStateNames.Desktop]:
                 return status
             else:
@@ -165,12 +165,18 @@ class DotHackInterface:
         self.pine.write_int8(0xa44f58, self.pine.read_int8(0xa44f58) | 0xff)
 
         # Kite's Class from Options
-        if ctx.kite_class == 0: self.pine.write_int8(0xA46F30, 0)
-        if ctx.kite_class == 1: self.pine.write_int8(0xA46F30, 1)
-        if ctx.kite_class == 2: self.pine.write_int8(0xA46F30, 2)
-        if ctx.kite_class == 3: self.pine.write_int8(0xA46F30, 3)
-        if ctx.kite_class == 4: self.pine.write_int8(0xA46F30, 4)
-        if ctx.kite_class == 5: self.pine.write_int8(0xA46F30, 5)
+        if ctx.kite_class == 0:
+            self.pine.write_int8(0xA46F30, 0)
+        if ctx.kite_class == 1:
+            self.pine.write_int8(0xA46F30, 1)
+        if ctx.kite_class == 2:
+            self.pine.write_int8(0xA46F30, 2)
+        if ctx.kite_class == 3:
+            self.pine.write_int8(0xA46F30, 3)
+        if ctx.kite_class == 4:
+            self.pine.write_int8(0xA46F30, 4)
+        if ctx.kite_class == 5:
+            self.pine.write_int8(0xA46F30, 5)
 
     async def check_locations(self, ctx) -> None:
         checked: Set[int] = set()

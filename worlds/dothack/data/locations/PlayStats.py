@@ -1,7 +1,15 @@
 from enum import Enum
+from typing import TypedDict
+
+
+class PlayStatAttributes(TypedDict):
+    addr: int
+    scale: str
+    values: list[int] | tuple[int, int]
 
 
 class PlayStats(Enum):
+    _value_: PlayStatAttributes
     AreasVisited = {"addr": 0xa46232, "scale": "list", "values": [1, 5, 10, 15, 20, 25, 30]}
     AllFieldPortalsOpened = {"addr": 0xa46236, "scale": "range", "values": (1, 31)}
     AllDungeonPortalsOpened = {"addr": 0xa46238, "scale": "range", "values": (1, 31)}

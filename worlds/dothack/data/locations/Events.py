@@ -1,7 +1,16 @@
 from enum import Enum
+from typing import TypedDict
+
+
+class InfectionEventAttributes(TypedDict):
+    address: int
+    bits: int
+    volumes: list[int]
 
 
 class InfectionEventBase(Enum):
+    _value_: InfectionEventAttributes
+
     @classmethod
     def from_address(self, address: int):
         for member in self:
