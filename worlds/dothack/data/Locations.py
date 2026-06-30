@@ -13,7 +13,7 @@ from .DataManager import VOLUME_DATA
 
 
 class InfectionLocation(Location):
-    game: str = Meta.game.value
+    game: str = str(Meta.game.value)
 
 
 class InfectionLocationMeta(ABC):
@@ -30,7 +30,7 @@ class InfectionLocationMeta(ABC):
 class InfectionAreaWordLocation(InfectionLocationMeta):
     word: AreaWords
 
-    def __init__(self, word: AreaWords) -> InfectionLocation:
+    def __init__(self, word: AreaWords):
         self.name = AreaWordNames[word.name].value
         self.location_id = word.value["id"]*10 + Addresses.AreaWords
         self.word = word
@@ -39,7 +39,7 @@ class InfectionAreaWordLocation(InfectionLocationMeta):
 class InfectionWordListLocation(InfectionLocationMeta):
     wordlist: WordListBase
 
-    def __init__(self, wordlist: WordListBase) -> InfectionLocation:
+    def __init__(self, wordlist: WordListBase):
         self.name = get_wordlist_name(wordlist)
         self.location_id = Addresses.WordLists * 10 + wordlist.value["address"]
         self.wordlist = wordlist
@@ -51,7 +51,7 @@ class InfectionEventLocation(InfectionLocationMeta):
     bitflags: int
     progress_type: LocationProgressType
 
-    def __init__(self, name: str, location_id: int, event, bitflags: int) -> InfectionLocation:
+    def __init__(self, name: str, location_id: int, event, bitflags: int):
         self.name = name
         self.location_id = location_id
         self.event = event
@@ -62,7 +62,7 @@ class InfectionEventLocation(InfectionLocationMeta):
 class InfectionPlayStatLocation(InfectionLocationMeta):
     stat: PlayStats
 
-    def __init__(self, name: str, stat: PlayStats, progress: int, progress_type: LocationProgressType) -> InfectionLocation:
+    def __init__(self, name: str, stat: PlayStats, progress: int, progress_type: LocationProgressType):
         self.name = name
         self.location_id = (stat.value["addr"] * 500) + progress
         self.stat = stat
@@ -79,13 +79,10 @@ def area_word_gen(enum) -> list[InfectionAreaWordLocation]:
 
 
 def wordlist_gen(enum, volume: int) -> list[InfectionWordListLocation]:
-    excluded_lists: list[WordListBase] = [
-        DeltaWordList.BurstingPassedOverAquaField,
-        DeltaWordList.HiddenForbiddenHolyGround
-    ]
     res = []
     for wordlist in enum:
-        if volume in wordlist.value.get("volumes", []) and wordlist not in excluded_lists:
+        volumes = wordlist.value.get("volumes", [])
+        if isinstance(volumes, list) and volume in volumes:
             res.append(InfectionWordListLocation(
                 wordlist
             ))
@@ -95,7 +92,8 @@ def wordlist_gen(enum, volume: int) -> list[InfectionWordListLocation]:
 def event_gen(enum, volume: int) -> list[InfectionEventLocation]:
     res = []
     for event in enum:
-        if volume in event.value.get("volumes", []):
+        volumes = event.value.get("volumes", [])
+        if isinstance(volumes, list) and volume in volumes:
             name = EventNames[event.name].value
             res.append(InfectionEventLocation(
                 name=name,
@@ -106,7 +104,7 @@ def event_gen(enum, volume: int) -> list[InfectionEventLocation]:
     return res
 
 
-PlayStatLocsList: InfectionPlayStatLocation
+PlayStatLocsList: list[InfectionPlayStatLocation]
 
 
 def playstat_gen(stats: dict[str, int] | None = None) -> list[InfectionPlayStatLocation]:

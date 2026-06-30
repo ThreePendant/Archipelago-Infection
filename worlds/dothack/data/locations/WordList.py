@@ -1,10 +1,20 @@
 from enum import Enum
+from typing import TypedDict
 from BaseClasses import ItemClassification
 from ..items.AreaWords import AreaWords
 from ..Strings import AreaWordNames
 
 
+class WordListAttributes(TypedDict):
+    address: int
+    words: list[AreaWords]
+    classifications: dict[int, ItemClassification]
+    volumes: list[int]
+
+
 class WordListBase(Enum):
+    _value_: WordListAttributes
+
     @classmethod
     def from_address(self, address: int):
         for member in self:
