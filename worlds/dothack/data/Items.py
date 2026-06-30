@@ -6,7 +6,7 @@ from .Strings import APHelper, Meta, CharacterNames, ServerNames, ItemNames
 from .items.PartyMembers import PartyMembers
 from .items.Servers import Servers
 from .locations.WordList import WordListBase, InfectionDeltaWordList, InfectionThetaWordList, get_wordlist_name
-from .items.FillerItems import Consumables, VirusCores
+from .items.FillerItems import Consumables, VirusCores, GruntyFood
 from .items.RyuBooks import RyuBooks
 from .DataManager import VOLUME_DATA
 
@@ -115,7 +115,22 @@ class VirusCoreItem(InfectionItemMeta):
             classification=self.classification
         )
 
+class GruntyFoodItem(InfectionItemMeta):
+    grunty_food: GruntyFood
 
+    def __init__(self, name, item, address):
+        self.name = name
+        self.item_id = (address * 16) + item.value["id"]
+        self.classification = ItemClassification.filler
+        self.grunty_food = item
+
+    def to_item(self, player: int) -> InfectionItem:
+        return InfectionItem(
+            name=self.name,
+            code=self.item_id,
+            player=player,
+            classification=self.classification
+        )
 class RyuBookItem(InfectionItemMeta):
     ryu_book: RyuBooks
 
@@ -137,6 +152,7 @@ class RyuBookItem(InfectionItemMeta):
 ConsumableItems: list[ConsumableItem] = []
 VirusCoreItems: list[VirusCoreItem] = []
 RyuBookItems: list[RyuBookItem] = []
+GruntyFoodItems: list[GruntyFoodItem] = []
 
 for consumable in Consumables:
     ConsumableItems.append(ConsumableItem(
@@ -149,6 +165,12 @@ for virus_core in VirusCores:
         name=ItemNames[virus_core.name].value,
         item=virus_core,
         address=Addresses.Storage + virus_core.value["id"]
+    ))
+for grunty_food in GruntyFood:
+    GruntyFoodItems.append(GruntyFoodItem(
+        name=ItemNames[grunty_food.name].value,
+        item=grunty_food,
+        address=Addresses.Storage + grunty_food.value["id"]
     ))
 for ryu_book in RyuBooks:
     RyuBookItems.append(RyuBookItem(
@@ -206,6 +228,7 @@ def generate_volume_items(volume: int):
         *v_data.wordlist_items,
         *ConsumableItems,
         *VirusCoreItems,
+        *GruntyFoodItems,
         *RyuBookItems
     ]
 
@@ -237,6 +260,7 @@ ITEMS_MASTER: Sequence[Sequence] = [
     *WordListItems,
     *ConsumableItems,
     *VirusCoreItems,
+    *GruntyFoodItems,
     *RyuBookItems
 ]
 
@@ -247,6 +271,7 @@ ITEMS_INDEX: Sequence[Sequence] = [
     WordListItems,
     ConsumableItems,
     VirusCoreItems,
+    GruntyFoodItems,
     RyuBookItems
 ]
 

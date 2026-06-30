@@ -44,6 +44,23 @@ class InfectionAddresses(VolumeAddresses):
         ItemNames.RyuBookVI.name: 0xA407E2,
         ItemNames.RyuBookVII.name: 0xA407E3,
         ItemNames.RyuBookVIII.name: 0xA407E4,
+        ItemNames.GoldenEgg.name: 0xA406E6,
+        ItemNames.GruntMints.name: 0xA406E7,
+        ItemNames.TwilightOnion.name: 0xA406E8,
+        ItemNames.SnakyCactus.name: 0xA406E9,
+        ItemNames.OhNoMelon.name: 0xA406EA,
+        ItemNames.Cordyceps.name: 0xA406EB,
+        ItemNames.WhiteCherry.name: 0xA406EC,
+        ItemNames.RootVegetable.name: 0xA406ED,
+        ItemNames.LaPumpkin.name: 0xA406EE,
+        ItemNames.Mushroom.name: 0xA406EF,
+        ItemNames.Mandragora.name: 0xA406F0,
+        ItemNames.PineyApple.name: 0xA406F1,
+        ItemNames.ImmatureEgg.name: 0xA406F2,
+        ItemNames.BearCatEgg.name: 0xA406F3,
+        ItemNames.InvisibleEgg.name: 0xA406F4,
+        ItemNames.BloodyEgg.name: 0xA406F5,
+
     }
     Events = {
         EventNames.Stehony.name: 0xa45059,

@@ -35,3 +35,21 @@ class VirusCores(Enum):
     VirusCoreA = {"id": 0xa406cc}
     VirusCoreB = {"id": 0xa406cd}
     VirusCoreC = {"id": 0xa406ce}
+
+class GruntyFood(Enum):
+    GoldenEgg = {"id": 0xA406E6}
+    GruntMints = {"id": 0xA406E7}
+    TwilightOnion = {"id": 0xA406E8}
+    SnakyCactus = {"id": 0xA406E9}
+    OhNoMelon = {"id": 0xA406EA}
+    Cordyceps = {"id": 0xA406EB}
+    WhiteCherry = {"id": 0xA406EC}
+    RootVegetable = {"id": 0xA406ED}
+    LaPumpkin = {"id": 0xA406EE}
+    Mushroom = {"id": 0xA406EF}
+    Mandragora = {"id": 0xA406F0}
+    PineyApple = {"id": 0xA406F1}
+    ImmatureEgg = {"id": 0xA406F2}
+    BearCatEgg = {"id": 0xA406F3}
+    InvisibleEgg = {"id": 0xA406F4}
+    BloodyEgg = {"id": 0xA406F5}

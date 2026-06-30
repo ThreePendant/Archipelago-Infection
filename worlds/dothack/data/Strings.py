@@ -211,6 +211,22 @@ class ItemNames(Enum):
     RyuBookVI = "Ryu Book VI"
     RyuBookVII = "Ryu Book VII"
     RyuBookVIII = "Ryu Book VIII"
+    GoldenEgg = "Golden Egg"
+    GruntMints = "Grunt Mints"
+    TwilightOnion = "Twilight Onion"
+    SnakyCactus = "Snaky Cactus"
+    OhNoMelon = "Oh No Melon"
+    Cordyceps = "Cordyceps"
+    WhiteCherry = "White Cherry"
+    RootVegetable = "Root Vegetable"
+    LaPumpkin = "La Pumpkin"
+    Mushroom = "Mushroom"
+    Mandragora = "Mandragora"
+    PineyApple = "Piney Apple"
+    ImmatureEgg = "Immature Egg"
+    BearCatEgg = "Bear Cat Egg"
+    InvisibleEgg = "Invisible Egg"
+    BloodyEgg = "Bloody Egg"
 
 
 class AreaWordNames(Enum):
