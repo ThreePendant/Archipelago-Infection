@@ -5,10 +5,10 @@ from BaseClasses import Item, ItemClassification
 from .Strings import APHelper, Meta, CharacterNames, ServerNames, ItemNames
 from .items.PartyMembers import PartyMembers
 from .items.Servers import Servers
+from .items.Weapons import Weapons
 from .locations.WordList import WordListBase, InfectionDeltaWordList, InfectionThetaWordList, get_wordlist_name
 from .items.FillerItems import Consumables, VirusCores, GruntyFood, InfectionLevel
 from .items.RyuBooks import RyuBooks
-from .items.Weapons import WeaponItems
 from .DataManager import VOLUME_DATA
 
 # Using Infection for IDs
@@ -106,7 +106,7 @@ class ConsumableItem(InfectionItemMeta):
         )
 
 class WeaponItem(InfectionItemMeta):
-    weapon: WeaponItems
+    weapon: Weapons
 
     def __init__(self, name, item, address):
         self.name = name
@@ -202,12 +202,13 @@ for consumable in Consumables:
         item=consumable,
         address=Addresses.Storage + consumable.value["id"]
     ))
-for weapon in WeaponItems:
+for weapon in Weapons:
     WeaponItems.append(WeaponItem(
         name=ItemNames[weapon.name].value,
         item=weapon,
         address=Addresses.Storage + weapon.value["id"]
     ))
+
 for virus_core in VirusCores:
     VirusCoreItems.append(VirusCoreItem(
         name=ItemNames[virus_core.name].value,
@@ -312,7 +313,7 @@ for v_data in VOLUME_DATA.values():
         if item not in ServerItems:
             ServerItems.append(item)
 
-ItemUnion = ConsumableItem | InfectionWordListItem | PartyMemberItem | RyuBookItem | ServerItem | VirusCoreItem
+ItemUnion = ConsumableItem | WeaponItem | InfectionWordListItem | PartyMemberItem | RyuBookItem | ServerItem | VirusCoreItem
 
 ITEMS_MASTER: list[ItemUnion] = [
     *PartyMemberItems,
