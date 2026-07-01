@@ -318,7 +318,7 @@ class DotHackInterface:
                     self.add_key(self.addresses.Items[item.grunty_food.name])
                 elif isinstance(item, InfectionLevelItem):
                     """Reduce Infection Rate to 0%"""
-                    self.add_key(self.addresses.Items[item.infection_level.name])
+                    self.add_reset_rate(self.addresses.Items[item.infection_level.name])
                 elif isinstance(item, WordListItem):
                     """Add to list of word lists to unlock"""
                     ctx.unlocked_word_lists.add(item.wordlist.value["address"])
@@ -387,6 +387,11 @@ class DotHackInterface:
     def add_key(self, addr) -> None:
         curr_amt = self.pine.read_int8(addr)
         self.pine.write_int8(addr, curr_amt + 1)
+
+    def add_reset_rate(self, addr) -> None:
+        curr_amt = self.pine.read_int8(addr)
+        self.pine.write_int8(addr, curr_amt - 100)
+
 
     async def scan_server(self, ctx) -> None:
         addr: int = self.addresses.Servers
