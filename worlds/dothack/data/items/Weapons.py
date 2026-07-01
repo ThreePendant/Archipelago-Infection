@@ -1,6 +1,6 @@
 from enum import Enum
 
-class WeaponItems(Enum):
+class Weapons(Enum):
     ##Twin Blades - Infection
     AmateurBlades = {"id": 0x00000000}
     SteelBlades = {"id": 0x00000001}
